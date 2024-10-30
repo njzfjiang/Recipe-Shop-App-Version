@@ -3,7 +3,7 @@
     <string name="login">Login</string>
     <string name="search_label">Search</string>
     <string name="favorites_label">Favorites</string>
-    <string name="grocery_list">Grocery List</string>
-    <string name="settings">Settings</string>
-    <string name="about_us">About Us</string>
+    <string name="grocery_list_label">Grocery List</string>
+    <string name="settings_label">Settings</string>
+    <string name="about_us_label">About Us</string>
 </resources>
