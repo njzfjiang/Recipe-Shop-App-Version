@@ -62,6 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
         Intent finishIntent = new Intent(getApplicationContext(), LoginActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(finishIntent);
+        this.finish();
     }//goToRegister
 
 }
