@@ -32,12 +32,14 @@ import java.util.concurrent.Executors;
 
 import comp4350.recipe_shop_app_version.R;
 import comp4350.recipe_shop_app_version.Other.Services;
+import comp4350.recipe_shop_app_version.Other.HTTPRequestTask;
 
 
 public class LoginActivity extends AppCompatActivity {
 
     private TextView ipInput, usernameInput, passwordInput, message;
     private Button loginButton, registerButton;
+    private Activity activity;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -51,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
+        activity = this;
         ipInput = findViewById(R.id.ip_input);
         usernameInput = findViewById(R.id.username_input);
         passwordInput = findViewById(R.id.password_input);
@@ -65,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(view -> {
             login();
         });
+
         registerButton.setOnClickListener(view -> {
             goToRegister();
         });
@@ -83,11 +87,12 @@ public class LoginActivity extends AppCompatActivity {
         }
         if(!ip.isEmpty() && !username.isEmpty() && !password.isEmpty()){
             loginAttempt();
-            String[] params = {"login",password};
+            String[] params = {"login"};
             Services.ip = ip;
             Services.username = username;
+            Services.password = password;
             ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.submit(new HTTPRequestTask(params,this));
+            executor.submit(new HTTPRequestTask(params,activity));
         }
         else{
             loginFail();
@@ -128,59 +133,5 @@ public class LoginActivity extends AppCompatActivity {
         message.setText("...");
         message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.black));
     }//loginAttempt
-
-
-    private class HTTPRequestTask implements Runnable{
-        ArrayList<String> params = new ArrayList<>();
-        Activity activity;
-        HTTPRequestTask(String[] input, Activity act){
-            params.addAll(Arrays.asList(input));
-            activity = act;
-        }//constructor
-
-        @Override
-        public void run(){
-            String urlString;
-            urlString = "http://" + Services.ip + ":80";
-            String data = "";
-            if(params.get(0).equals("login")){
-                urlString += "/api/login?username=";
-                urlString += Services.username;
-                urlString += "&password=";
-                urlString += params.get(1);
-            }
-            try {
-                URL url = new URL(urlString);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                Scanner scan = new Scanner(urlConnection.getInputStream());
-                while(scan.hasNextLine()){
-                    data = scan.nextLine();
-                }
-                scan.close();
-                //System.out.println(data);
-                urlConnection.disconnect();
-            }catch(FileNotFoundException fnf){
-                if(params.get(0).equals("login")){
-                    ((LoginActivity)activity).loginFail();
-                }
-                fnf.printStackTrace();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-
-            int end = data.lastIndexOf("\"");
-            int start = data.lastIndexOf("\"", end-1)+1;
-            String message = data.substring(start, end);
-            //System.out.println(start);
-            //System.out.println(end);
-            System.out.println(message);
-
-            if(params.get(0).equals("login") && message.equalsIgnoreCase("Login successful!")) {
-                System.out.println("loginSuccess");
-                ((LoginActivity)activity).loginSuccess();
-            }
-        }//run
-
-    }//HTTPRequestTask
 
 }

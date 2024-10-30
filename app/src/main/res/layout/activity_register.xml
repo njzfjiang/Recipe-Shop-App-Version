@@ -98,6 +98,29 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/messageUsernameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16sp"
+        android:paddingTop="16sp"
+        android:paddingRight="16sp"
+        android:paddingBottom="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/usernameLayout">
+
+        <TextView
+            android:id="@+id/messageUsernameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            android:text=""
+            android:textAlignment="center"
+            android:textSize="24sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/passwordLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -107,7 +130,7 @@
         android:paddingBottom="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/usernameLayout">
+        app:layout_constraintTop_toBottomOf="@id/messageUsernameLayout">
 
         <TextView
             android:id="@+id/password"
@@ -166,6 +189,29 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/messageLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16sp"
+        android:paddingTop="16sp"
+        android:paddingRight="16sp"
+        android:paddingBottom="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/confirmLayout">
+
+        <TextView
+            android:id="@+id/messageText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            android:text=""
+            android:textAlignment="center"
+            android:textSize="24sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/registerButtonLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -175,7 +221,7 @@
         android:paddingBottom="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/confirmLayout">
+        app:layout_constraintTop_toBottomOf="@id/messageLayout">
 
         <Button
             android:id="@+id/registerButton"
