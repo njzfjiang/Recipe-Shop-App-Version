@@ -9,6 +9,7 @@
     >
 
     <RelativeLayout
+        android:id="@+id/pageContent"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
@@ -16,13 +17,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/aboutTitle"
+        <RelativeLayout
+            android:id="@+id/pageTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/about_us_label"
-            android:textAlignment="center"
-            android:textSize="34sp" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/aboutTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/about_us_label"
+                android:textAlignment="center"
+                android:textSize="34sp" />
+        </RelativeLayout>
+
     </RelativeLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

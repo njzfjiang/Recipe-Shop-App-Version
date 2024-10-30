@@ -1,9 +1,16 @@
 <resources>
     <string name="app_name">Recipe-Shop-App-Version</string>
-    <string name="login">Login</string>
-    <string name="search_label">Search</string>
-    <string name="favorites_label">Favorites</string>
-    <string name="grocery_list_label">Grocery List</string>
-    <string name="settings_label">Settings</string>
-    <string name="about_us_label">About Us</string>
+    <string name="search_label">"Search"</string>
+    <string name="favorites_label">"Favorites"</string>
+    <string name="grocery_list_label">"Grocery List"</string>
+    <string name="settings_label">"Settings"</string>
+    <string name="about_us_label">"About Us"</string>
+    <string name="login_label">"Login"</string>
+    <string name="ip_label">"ip: "</string>
+    <string name="username_label">"Username: "</string>
+    <string name="password_label">"Password: "</string>
+    <string name="register_prompt">Not a member?</string>
+    <string name="register_label">Register</string>
+    <string name="confirm_label">Confirm Password:</string>
+    <string name="login_prompt">Already a member?</string>
 </resources>

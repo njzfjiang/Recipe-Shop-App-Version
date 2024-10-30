@@ -37,6 +37,14 @@
             android:name=".Activity.GroceryActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".Activity.LoginActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".Activity.RegisterActivity"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>
