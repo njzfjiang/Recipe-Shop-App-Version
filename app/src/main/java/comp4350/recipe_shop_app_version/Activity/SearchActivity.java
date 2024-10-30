@@ -24,15 +24,15 @@ public class SearchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_about);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.about_layout), (v, insets) -> {
+        setContentView(R.layout.activity_search);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.search_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
         navBar = findViewById(R.id.bottomNavigationView);
-        navBar.setSelectedItemId(R.id.about_us);
+        navBar.setSelectedItemId(R.id.search);
 
         setListeners();
     }//onCreate
@@ -81,7 +81,7 @@ public class SearchActivity extends AppCompatActivity {
     }//goToSettings
 
     private void goToAbout(){
-        Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);
+        Intent finishIntent = new Intent(getApplicationContext(), AboutActivity.class);
         startActivity(finishIntent);
     }//goToAbout
 }
