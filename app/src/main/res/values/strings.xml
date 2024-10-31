@@ -13,4 +13,8 @@
     <string name="register_label">Register</string>
     <string name="confirm_label">Confirm Password:</string>
     <string name="login_prompt">Already a member?</string>
+    <string name="meal_type_label">"Meal Type: "</string>
+    <string name="cooking_time">"Cooking Time: "</string>
+    <string name="dash">" - "</string>
+    <string name="keywords_label">"Keywords: "</string>
 </resources>

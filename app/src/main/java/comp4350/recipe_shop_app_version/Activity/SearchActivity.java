@@ -3,6 +3,12 @@ package comp4350.recipe_shop_app_version.Activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,12 +18,19 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
+
 import comp4350.recipe_shop_app_version.R;
 
 
 public class SearchActivity extends AppCompatActivity {
 
     private BottomNavigationView navBar;
+    private Spinner mealTypeSpinner;
+    private TextView minTimeInput, maxTimeInput, keywordsInput;
+    private Button searchButton;
+    private String mealType, keywords;
+    private int minTime, maxTime;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -33,6 +46,22 @@ public class SearchActivity extends AppCompatActivity {
 
         navBar = findViewById(R.id.bottomNavigationView);
         navBar.setSelectedItemId(R.id.search);
+        mealTypeSpinner = findViewById(R.id.meal_type_spinner);
+        minTimeInput = findViewById(R.id.min_time_input);
+        maxTimeInput = findViewById(R.id.max_time_input);
+        keywordsInput = findViewById(R.id.keyword_input);
+        searchButton = findViewById(R.id.searchButton);
+
+
+        ArrayList<String> mealTypeOptions = new ArrayList<>();
+        mealTypeOptions.add("--meal type--");
+        mealTypeOptions.add("Breakfast");
+        mealTypeOptions.add("Dinner");
+        mealTypeOptions.add("Lunch");
+        mealTypeOptions.add("Snack");
+        mealTypeOptions.add("Teatime");
+        ArrayAdapter spinnerViewAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_layout, R.id.listText, mealTypeOptions);
+        mealTypeSpinner.setAdapter(spinnerViewAdapter);
 
         setListeners();
     }//onCreate
@@ -58,7 +87,42 @@ public class SearchActivity extends AppCompatActivity {
             }
             return success;
         });
+
+        mealTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                int position = adapterView.getPositionForView(view);
+
+                if (position == 1) {
+                    mealType = "--meal type--";
+                } else if (position == 2) {
+                    mealType = "Breakfast";
+                } else if(position == 3){
+                    mealType = "Dinner";
+                }else if(position == 4){
+                    mealType = "Lunch";
+                }else if(position == 5){
+                    mealType = "Snack";
+                }else if(position == 6){
+                    mealType = "Teatime";
+                }
+            }//onItemSelected
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }//onNothingSelected
+        });
+
+        searchButton.setOnClickListener(view -> {
+            search();
+        });
+
     }//setListeners
+
+    private void search(){
+
+    }//search
 
     private void goToSearch(){
         Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);
