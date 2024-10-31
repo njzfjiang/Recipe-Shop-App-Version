@@ -55,9 +55,9 @@ public class HTTPRequestTask implements Runnable{
 
         else if(params.get(0).equals("register")){
             urlString += "/api/register";
-            String[] params = {"POST", "{\"username\":\"",Services.username,
-                    "\",\"password\":\"",Services.password,
-                    "\",\"confirmPassword\":\"",Services.confirm,"\"}"};
+            String[] params = {"POST", "{\n\"username\":\"",Services.username, "\"," +
+                    "\n\"password\":\"",Services.password, "\"," +
+                    "\n\"confirmPassword\":\"",Services.confirm,"\"\n}"};
 
             data = request(urlString, params);
 
@@ -106,7 +106,6 @@ public class HTTPRequestTask implements Runnable{
         try {
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setDoInput(true);
             urlConnection.connect();
 
             //not 200
@@ -154,18 +153,15 @@ public class HTTPRequestTask implements Runnable{
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod(params[0]);
-            //urlConnection.setRequestProperty("Content-Length", Integer.toString(body.getBytes().length));
-            urlConnection.setDoOutput(true);
-            urlConnection.setDoInput(true);
+            urlConnection.setRequestProperty("Content-Length", Integer.toString(body.getBytes().length));
+            urlConnection.setRequestProperty("Content-Type", "application/json");
 
             OutputStream os = urlConnection.getOutputStream();
-            OutputStreamWriter osw = new OutputStreamWriter(os, "UTF-8");
+            OutputStreamWriter osw = new OutputStreamWriter(os);
             osw.write(body);
             osw.flush();
             osw.close();
             os.close();
-            urlConnection.connect();
-
 
             //not 201
             if(urlConnection.getResponseCode() != 201){
