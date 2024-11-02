@@ -1,6 +1,7 @@
 package comp4350.recipe_shop_app_version.Activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -19,7 +21,11 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import comp4350.recipe_shop_app_version.Other.HTTPRequestTask;
+import comp4350.recipe_shop_app_version.Other.Services;
 import comp4350.recipe_shop_app_version.R;
 
 
@@ -27,10 +33,12 @@ public class SearchActivity extends AppCompatActivity {
 
     private BottomNavigationView navBar;
     private Spinner mealTypeSpinner;
-    private TextView minTimeInput, maxTimeInput, keywordsInput;
+    private TextView minTimeInput, maxTimeInput, keywordsInput, message;
     private Button searchButton;
-    private String mealType, keywords;
-    private int minTime, maxTime;
+    private String mealType;
+    private String keywords = "";
+    private String minTime, maxTime = "0";
+    private Activity activity;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -44,6 +52,7 @@ public class SearchActivity extends AppCompatActivity {
             return insets;
         });
 
+        activity = this;
         navBar = findViewById(R.id.bottomNavigationView);
         navBar.setSelectedItemId(R.id.search);
         mealTypeSpinner = findViewById(R.id.meal_type_spinner);
@@ -51,6 +60,7 @@ public class SearchActivity extends AppCompatActivity {
         maxTimeInput = findViewById(R.id.max_time_input);
         keywordsInput = findViewById(R.id.keyword_input);
         searchButton = findViewById(R.id.searchButton);
+        message = findViewById(R.id.messageText);
 
 
         ArrayList<String> mealTypeOptions = new ArrayList<>();
@@ -64,6 +74,7 @@ public class SearchActivity extends AppCompatActivity {
         mealTypeSpinner.setAdapter(spinnerViewAdapter);
 
         setListeners();
+        mealTypeSpinner.setSelection(0);
     }//onCreate
 
     public void setListeners(){
@@ -92,26 +103,22 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 int position = adapterView.getPositionForView(view);
-
-                if (position == 1) {
-                    mealType = "--meal type--";
-                } else if (position == 2) {
+                if (position == 0) {
+                    mealType = "";
+                } else if (position == 1) {
                     mealType = "Breakfast";
-                } else if(position == 3){
+                } else if(position == 2){
                     mealType = "Dinner";
-                }else if(position == 4){
+                }else if(position == 3){
                     mealType = "Lunch";
-                }else if(position == 5){
+                }else if(position == 4){
                     mealType = "Snack";
-                }else if(position == 6){
+                }else if(position == 5){
                     mealType = "Teatime";
                 }
             }//onItemSelected
-
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }//onNothingSelected
+            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
         searchButton.setOnClickListener(view -> {
@@ -121,8 +128,46 @@ public class SearchActivity extends AppCompatActivity {
     }//setListeners
 
     private void search(){
-
+        try {
+            keywords = keywordsInput.getText().toString();
+            minTime = minTimeInput.getText().toString();
+            maxTime = maxTimeInput.getText().toString();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if(!keywords.isEmpty()){
+            searchAttempt();
+            String[] params = {"search", mealType, minTime, maxTime, keywords};
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(new HTTPRequestTask(params,activity));
+        }
+        else{
+            searchEmpty();
+        }
     }//search
+
+    private void searchAttempt(){
+        message.setVisibility(View.VISIBLE);
+        message.setText("...");
+        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.black));
+    }//searchAttempt
+
+    private void searchEmpty(){
+        message.setVisibility(View.VISIBLE);
+        message.setText("Please enter keywords and try again!");
+        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red));
+    }//searchEmpty
+
+    public void searchFail(){
+        message.setVisibility(View.VISIBLE);
+        message.setText("Search Failed!");
+        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red));
+    }//searchFail
+
+    public void searchSuccess(String response){
+        message.setVisibility(View.GONE);
+        System.out.println(response);
+    }//searchFail
 
     private void goToSearch(){
         Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);

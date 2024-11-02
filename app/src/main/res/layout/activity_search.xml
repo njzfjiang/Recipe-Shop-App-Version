@@ -13,6 +13,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:isScrollContainer="true"
+        android:fadeScrollbars="true"
+        android:fadingEdgeLength="16dp"
+        android:scrollIndicators="top|bottom"
+        android:scrollbarSize="8dp"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbarThumbVertical="@color/transparent_black_25"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -87,42 +94,57 @@
                 android:text="@string/cooking_time"
                 android:textSize="24sp" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/min_time"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/cookingTimeInputLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/cookingTime">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/min_time_input"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/min_time"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="Min"
-                    android:inputType="number" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/dash">
 
-            <TextView
-                android:id="@+id/dash"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/min_time"
-                android:text="@string/dash"
-                android:textSize="24sp" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/min_time_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="Min"
+                        android:inputType="number"
+                        android:selectAllOnFocus="true"
+                        android:text="0"
+                        android:textAlignment="center" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/max_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/dash">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/max_time_input"
+                <TextView
+                    android:id="@+id/dash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/dash"
+                    android:textAlignment="center"
+                    android:textSize="24sp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/max_time"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="Max Time"
-                    android:inputType="number" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/dash">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/max_time_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="Max"
+                        android:inputType="number"
+                        android:selectAllOnFocus="true"
+                        android:text="0"
+                        android:textAlignment="center" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
@@ -161,7 +183,7 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/loginButtonLayout"
+            android:id="@+id/searchButtonLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="32sp"
@@ -180,6 +202,39 @@
                 android:text="@string/search_label"
                 android:textSize="28sp" />
         </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/messageLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16sp"
+            android:paddingTop="16sp"
+            android:paddingRight="16sp"
+            android:paddingBottom="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/searchButtonLayout">
+
+            <TextView
+                android:id="@+id/messageText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:visibility="gone"
+                android:text=""
+                android:textAlignment="center"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:choiceMode="singleChoice"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/messageLayout"
+            tools:listitem="@layout/recipe_list_layout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

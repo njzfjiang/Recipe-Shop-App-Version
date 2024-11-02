@@ -3,6 +3,8 @@ package comp4350.recipe_shop_app_version.Activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,12 +14,15 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import comp4350.recipe_shop_app_version.Other.Services;
 import comp4350.recipe_shop_app_version.R;
 
 
 public class SettingsActivity extends AppCompatActivity {
 
     private BottomNavigationView navBar;
+    private TextView ipInput, usernameInput;
+    private Button logoutButton;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -33,11 +38,21 @@ public class SettingsActivity extends AppCompatActivity {
 
         navBar = findViewById(R.id.bottomNavigationView);
         navBar.setSelectedItemId(R.id.settings);
+        ipInput = findViewById(R.id.ip_input);
+        usernameInput = findViewById(R.id.username_input);
+        logoutButton = findViewById(R.id.logoutButton);
+
+        ipInput.setText(Services.ip);
+        usernameInput.setText(Services.username);
 
         setListeners();
     }//onCreate
 
     public void setListeners(){
+        logoutButton.setOnClickListener(view -> {
+            logout();
+        });
+
         navBar.setOnNavigationItemSelectedListener(item -> {
             boolean success = false;
             if(item.getItemId() == R.id.search){
@@ -59,6 +74,15 @@ public class SettingsActivity extends AppCompatActivity {
             return success;
         });
     }//setListeners
+
+    private void logout(){
+        Services.password = "";
+        Services.confirm = "";
+        Intent finishIntent = new Intent(getApplicationContext(), LoginActivity.class);
+        finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(finishIntent);
+        this.finish();
+    }
 
     private void goToSearch(){
         Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);

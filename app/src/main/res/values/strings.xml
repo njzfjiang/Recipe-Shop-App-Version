@@ -17,4 +17,18 @@
     <string name="cooking_time">"Cooking Time: "</string>
     <string name="dash">" - "</string>
     <string name="keywords_label">"Keywords: "</string>
+    <string name="logout_label">Logout</string>
+    <string name="about_us_info">Recipe Shop is an online platform built for anyone who loves to cook or needs a hand in preparing meals. Recipe shop aims to provide convenience in the process of preparing meals and grocery shopping; and allows people of similar interests to find and share their favorite recipes.</string>
+    <string name="edamame_link">
+        <a href="https://developer.edamam.com/edamam-docs-recipe-api">Edamame API</a>
+    </string>
+    <string name="github_app_link">
+        <a href="https://github.com/njzfjiang/Recipe-Shop-App-Version">App GitHub Repo</a>
+    </string>
+    <string name="github_link">
+        <a href="https://github.com/njzfjiang/Recipe-Shop">GitHub Repo</a>
+    </string>
+    <string name="webpage_link">
+        <a href="http://">Webpage Version</a>
+    </string>
 </resources>

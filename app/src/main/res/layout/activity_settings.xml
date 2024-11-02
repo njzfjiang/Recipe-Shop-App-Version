@@ -5,13 +5,21 @@
     android:id="@+id/settings_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity.AboutActivity"
+    tools:context=".Activity.SettingsActivity"
     >
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/pageContent"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:isScrollContainer="true"
+        android:fadeScrollbars="true"
+        android:fadingEdgeLength="16dp"
+        android:scrollIndicators="top|bottom"
+        android:scrollbarSize="8dp"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbarThumbVertical="@color/transparent_black_25"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,18 +28,106 @@
         <RelativeLayout
             android:id="@+id/pageTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/pageTitle">
 
             <TextView
                 android:id="@+id/settingsTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingLeft="32sp"
+                android:paddingTop="64sp"
+                android:paddingRight="32sp"
+                android:paddingBottom="32sp"
                 android:text="@string/settings_label"
                 android:textAlignment="center"
                 android:textSize="34sp" />
         </RelativeLayout>
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/ipLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32sp"
+            android:paddingRight="32sp"
+            android:paddingTop="16sp"
+            android:paddingBottom="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pageTitle">
+
+            <TextView
+                android:id="@+id/ip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/ip_label"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/ip_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="ip address"
+                android:textSize="24sp"
+                android:layout_toEndOf="@id/ip"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/usernameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32sp"
+            android:paddingRight="32sp"
+            android:paddingTop="16sp"
+            android:paddingBottom="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ipLayout">
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/username_label"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/username_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="username"
+                android:textSize="24sp"
+                android:layout_toEndOf="@id/username"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/logoutButtonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32sp"
+            android:paddingTop="16sp"
+            android:paddingRight="32sp"
+            android:paddingBottom="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/usernameLayout">
+
+            <Button
+                android:id="@+id/logoutButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/logout_label"
+                android:textSize="28sp" />
+        </RelativeLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

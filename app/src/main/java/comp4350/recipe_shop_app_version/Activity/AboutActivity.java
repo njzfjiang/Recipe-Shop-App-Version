@@ -3,6 +3,9 @@ package comp4350.recipe_shop_app_version.Activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import comp4350.recipe_shop_app_version.Other.Services;
 import comp4350.recipe_shop_app_version.R;
 
 
@@ -19,6 +23,7 @@ import comp4350.recipe_shop_app_version.R;
 public class AboutActivity extends AppCompatActivity {
 
     private BottomNavigationView navBar;
+    private TextView edamameLink, githubLink, githubAppLink, webpageLink;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -34,6 +39,16 @@ public class AboutActivity extends AppCompatActivity {
 
         navBar = findViewById(R.id.bottomNavigationView);
         navBar.setSelectedItemId(R.id.about_us);
+        edamameLink = findViewById(R.id.edamame);
+        githubLink = findViewById(R.id.github);
+        githubAppLink = findViewById(R.id.githubApp);
+        webpageLink = findViewById(R.id.webpage);
+
+        edamameLink.setMovementMethod(LinkMovementMethod.getInstance());
+        githubLink.setMovementMethod(LinkMovementMethod.getInstance());
+        githubAppLink.setMovementMethod(LinkMovementMethod.getInstance());
+        webpageLink.setText(Html.fromHtml("<a href=\"http://" + Services.ip + "\">Webpage Verion</a>"));
+        webpageLink.setMovementMethod(LinkMovementMethod.getInstance());
 
         setListeners();
     }//onCreate

@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -61,6 +63,9 @@ public class LoginActivity extends AppCompatActivity {
         registerButton = findViewById(R.id.registerButton);
         message = findViewById(R.id.messageText);
 
+        ipInput.setText(Services.ip);
+        usernameInput.setText(Services.username);
+
         setListeners();
     }//onCreate
 
@@ -72,25 +77,37 @@ public class LoginActivity extends AppCompatActivity {
         registerButton.setOnClickListener(view -> {
             goToRegister();
         });
+
+        ipInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                Services.ip = ipInput.getText().toString();
+            }
+        });
+
+        usernameInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                Services.username = usernameInput.getText().toString();
+            }
+        });
     }//setListeners
 
     private void login(){
-        String ip = "";
-        String username = "";
-        String password = "";
-        try {
-            ip = ipInput.getText().toString();
-            username = usernameInput.getText().toString();
-            password = passwordInput.getText().toString();
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-        if(!ip.isEmpty() && !username.isEmpty() && !password.isEmpty()){
+        Services.ip = ipInput.getText().toString();
+        Services.username = usernameInput.getText().toString();
+        Services.password = passwordInput.getText().toString();
+        if(!Services.ip.isEmpty() && !Services.username.isEmpty() && !Services.password.isEmpty()){
             loginAttempt();
             String[] params = {"login"};
-            Services.ip = ip;
-            Services.username = username;
-            Services.password = password;
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(new HTTPRequestTask(params,activity));
         }

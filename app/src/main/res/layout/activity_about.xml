@@ -5,13 +5,20 @@
     android:id="@+id/about_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activity.AboutActivity"
-    >
+    tools:context=".Activity.AboutActivity">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/pageContent"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fadeScrollbars="true"
+        android:fadingEdgeLength="16dp"
+        android:isScrollContainer="true"
+        android:scrollIndicators="top|bottom"
+        android:scrollbarSize="8dp"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbarThumbVertical="@color/transparent_black_25"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,18 +27,138 @@
         <RelativeLayout
             android:id="@+id/pageTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/pageTitle">
 
             <TextView
                 android:id="@+id/aboutTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingLeft="32sp"
+                android:paddingTop="64sp"
+                android:paddingRight="32sp"
+                android:paddingBottom="32sp"
                 android:text="@string/about_us_label"
                 android:textAlignment="center"
                 android:textSize="34sp" />
         </RelativeLayout>
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/infoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32sp"
+            android:paddingTop="16sp"
+            android:paddingRight="32sp"
+            android:paddingBottom="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pageTitle">
+
+            <TextView
+                android:id="@+id/info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/about_us_info"
+                android:textAlignment="center"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/edamameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32sp"
+            android:paddingTop="16sp"
+            android:paddingRight="32sp"
+            android:paddingBottom="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/infoLayout">
+
+            <TextView
+                android:id="@+id/edamame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/edamame_link"
+                android:textAlignment="center"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/githubLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32sp"
+            android:paddingTop="16sp"
+            android:paddingRight="32sp"
+            android:paddingBottom="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edamameLayout">
+
+            <TextView
+                android:id="@+id/github"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/github_link"
+                android:textAlignment="center"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/githubAppLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32sp"
+            android:paddingTop="16sp"
+            android:paddingRight="32sp"
+            android:paddingBottom="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/githubLayout">
+
+            <TextView
+                android:id="@+id/githubApp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/github_app_link"
+                android:textAlignment="center"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/webpageLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32sp"
+            android:paddingTop="16sp"
+            android:paddingRight="32sp"
+            android:paddingBottom="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/githubAppLayout">
+
+            <TextView
+                android:id="@+id/webpage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/webpage_link"
+                android:textAlignment="center"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
@@ -40,5 +167,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_navigation_menu"/>
+        app:menu="@menu/bottom_navigation_menu" />
 </androidx.constraintlayout.widget.ConstraintLayout>

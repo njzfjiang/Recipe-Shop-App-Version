@@ -53,6 +53,14 @@ public class RegisterActivity extends AppCompatActivity {
         message = findViewById(R.id.messageText);
         messageUsername = findViewById(R.id.messageUsernameText);
 
+        ipInput.setText(Services.ip);
+        usernameInput.setText(Services.username);
+        if(!Services.username.isEmpty()){
+            userExistsAttempt();
+            String[] params = {"user-exists"};
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(new HTTPRequestTask(params,activity));
+        }
 
         setListeners();
     }//onCreate
@@ -66,31 +74,27 @@ public class RegisterActivity extends AppCompatActivity {
             register();
         });
 
-        usernameInput.addTextChangedListener(new TextWatcher() {
+        ipInput.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
             @Override
             public void afterTextChanged(Editable editable) {
-                String ip = "";
-                String username = "";
-                try {
-                    ip = ipInput.getText().toString();
-                    username = usernameInput.getText().toString();
-                } catch(Exception e){
-                    e.printStackTrace();
-                }
+                Services.ip = ipInput.getText().toString();
+            }
+        });
+
+        usernameInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                Services.username = usernameInput.getText().toString();
                 userExistsAttempt();
                 String[] params = {"user-exists"};
-                Services.ip = ip;
-                Services.username = username;
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 executor.submit(new HTTPRequestTask(params,activity));
             }
@@ -98,25 +102,14 @@ public class RegisterActivity extends AppCompatActivity {
     }//setListeners
 
     private void register(){
-        String ip = "";
-        String username = "";
-        String password = "";
-        String confirm = "";
-        try {
-            ip = ipInput.getText().toString();
-            username = usernameInput.getText().toString();
-            password = passwordInput.getText().toString();
-            confirm = confirmInput.getText().toString();
-        } catch(Exception e){
-            e.printStackTrace();
-        }
-        if(!ip.isEmpty() && !username.isEmpty() && !password.isEmpty() && !confirm.isEmpty()){
+        Services.ip = ipInput.getText().toString();
+        Services.username = usernameInput.getText().toString();
+        Services.password = passwordInput.getText().toString();
+        Services.confirm = confirmInput.getText().toString();
+
+        if(!Services.ip.isEmpty() && !Services.username.isEmpty() && !Services.password.isEmpty() && !Services.confirm.isEmpty()){
             registerAttempt();
             String[] params = {"register"};
-            Services.ip = ip;
-            Services.username = username;
-            Services.password = password;
-            Services.confirm = confirm;
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(new HTTPRequestTask(params,activity));
         }
