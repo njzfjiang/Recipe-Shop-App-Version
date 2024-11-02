@@ -2,12 +2,16 @@ package comp4350.recipe_shop_app_version.Activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -20,11 +24,14 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import comp4350.recipe_shop_app_version.Other.HTTPRequestTask;
+import comp4350.recipe_shop_app_version.Other.RecipeListArrayAdapter;
 import comp4350.recipe_shop_app_version.Other.Services;
 import comp4350.recipe_shop_app_version.R;
 
@@ -39,6 +46,10 @@ public class SearchActivity extends AppCompatActivity {
     private String keywords = "";
     private String minTime, maxTime = "0";
     private Activity activity;
+    private ListView recipeList;
+    private ArrayList<JSONObject> recipes;
+    private ArrayAdapter<JSONObject> listArrayAdapter;
+    private Context context;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -61,7 +72,10 @@ public class SearchActivity extends AppCompatActivity {
         keywordsInput = findViewById(R.id.keyword_input);
         searchButton = findViewById(R.id.searchButton);
         message = findViewById(R.id.messageText);
+        recipeList = findViewById(R.id.listView);
+        context = this;
 
+        //recipes = new ArrayList<>();
 
         ArrayList<String> mealTypeOptions = new ArrayList<>();
         mealTypeOptions.add("--meal type--");
@@ -128,6 +142,8 @@ public class SearchActivity extends AppCompatActivity {
     }//setListeners
 
     private void search(){
+        recipes = new ArrayList<>();
+        recipeList.setVisibility(View.GONE);
         try {
             keywords = keywordsInput.getText().toString();
             minTime = minTimeInput.getText().toString();
@@ -142,20 +158,26 @@ public class SearchActivity extends AppCompatActivity {
             executor.submit(new HTTPRequestTask(params,activity));
         }
         else{
-            searchEmpty();
+            keywordsEmpty();
         }
     }//search
 
     private void searchAttempt(){
         message.setVisibility(View.VISIBLE);
-        message.setText("...");
+        message.setText("Searching ...");
         message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.black));
     }//searchAttempt
 
-    private void searchEmpty(){
+    private void keywordsEmpty(){
         message.setVisibility(View.VISIBLE);
         message.setText("Please enter keywords and try again!");
         message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red));
+    }//searchEmpty
+
+    private void searchEmpty(){
+        message.setVisibility(View.VISIBLE);
+        message.setText("No results.");
+        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.black));
     }//searchEmpty
 
     public void searchFail(){
@@ -165,8 +187,54 @@ public class SearchActivity extends AppCompatActivity {
     }//searchFail
 
     public void searchSuccess(String response){
-        message.setVisibility(View.GONE);
         System.out.println(response);
+        try {
+            JSONObject searchResults = new JSONObject(response);
+            int from = (int) searchResults.get("from");
+            int to = (int) searchResults.get("to");
+            System.out.println("from: " + from);
+            System.out.println("to: " + to);
+            if(to>0){
+                for(int i=from-1;i<to;i++){
+                    JSONObject recipe = new JSONObject(searchResults.getJSONArray("hits").get(i).toString());
+                    System.out.println("hit " + i +": " + searchResults.getJSONArray("hits").get(i).toString());
+                    System.out.println(recipe);
+                    recipes.add(recipe);
+                }
+                listArrayAdapter = new RecipeListArrayAdapter(this,R.layout.recipe_list_layout, recipes);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        recipeList.setAdapter(listArrayAdapter);
+                        int height = 0;
+                        for(int i=0;i<listArrayAdapter.getCount();i++){
+                            View listItem = listArrayAdapter.getView(i,null, recipeList);
+                            listItem.measure(0,0);
+                            height += listItem.getMeasuredHeight() + recipeList.getDividerHeight();
+                        }
+                        ViewGroup.LayoutParams layoutParams = recipeList.getLayoutParams();
+                        layoutParams.height = height;
+                        recipeList.setLayoutParams(layoutParams);
+                        message.setVisibility(View.GONE);
+                        recipeList.setVisibility(View.VISIBLE);
+                    }
+                });
+
+                recipeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        int position = adapterView.getPositionForView(view);
+                        //go to recipe
+                    }
+                });
+            }
+            else{
+                searchEmpty();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            searchFail();
+        }
     }//searchFail
 
     private void goToSearch(){

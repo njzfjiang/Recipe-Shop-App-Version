@@ -6,9 +6,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/recipe_shop_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/recipe_shop_logo_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RecipeShopAppVersion"
         android:usesCleartextTraffic="true"
@@ -23,22 +23,27 @@
             </intent-filter>
         </activity>
         <activity
+            android:windowSoftInputMode="adjustPan"
             android:name=".Activity.SettingsActivity"
             android:exported="true">
         </activity>
         <activity
+            android:windowSoftInputMode="adjustPan"
             android:name=".Activity.SearchActivity"
             android:exported="true">
         </activity>
         <activity
+            android:windowSoftInputMode="adjustPan"
             android:name=".Activity.FavoritesActivity"
             android:exported="true">
         </activity>
         <activity
+            android:windowSoftInputMode="adjustPan"
             android:name=".Activity.GroceryActivity"
             android:exported="true">
         </activity>
         <activity
+            android:windowSoftInputMode="adjustPan"
             android:name=".Activity.AboutActivity"
             android:exported="true">
         </activity>
