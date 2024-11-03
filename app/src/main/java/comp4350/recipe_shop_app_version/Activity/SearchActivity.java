@@ -253,6 +253,7 @@ public class SearchActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                images.set(pos, image);
                 ((RecipeListArrayAdapter)recipeList.getAdapter()).setImage(pos, image);
                 updateListView();
             }

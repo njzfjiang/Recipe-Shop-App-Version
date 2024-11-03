@@ -8,30 +8,141 @@
     tools:context=".Activity.AboutActivity"
     >
 
-    <RelativeLayout
-        android:id="@+id/pageContent"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fadeScrollbars="true"
+        android:fadingEdgeLength="16dp"
+        android:isScrollContainer="true"
+        android:scrollIndicators="top|bottom"
+        android:scrollbarSize="8dp"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbarThumbVertical="@color/transparent_black_25"
+        android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <RelativeLayout
-            android:id="@+id/pageTitle"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/pageContent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/favoritesTitle"
+            <RelativeLayout
+                android:id="@+id/pageTitle"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:id="@+id/recipeInfoTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="32sp"
+                    android:paddingTop="64sp"
+                    android:paddingRight="32sp"
+                    android:paddingBottom="8sp"
+                    android:text="@string/favorites_label"
+                    android:textAlignment="center"
+                    android:textSize="34sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/usernameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pageTitle">
+
+                <TextView
+                    android:id="@+id/username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="32sp"
+                    android:paddingTop="8sp"
+                    android:paddingRight="32sp"
+                    android:paddingBottom="16sp"
+                    android:text="@string/username_label"
+                    android:textAlignment="center"
+                    android:textSize="24sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/keywordLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/favorites_label"
-                android:textAlignment="center"
-                android:textSize="34sp" />
-        </RelativeLayout>
+                android:paddingLeft="32sp"
+                android:paddingTop="16sp"
+                android:paddingRight="32sp"
+                android:paddingBottom="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/usernameLayout">
 
-    </RelativeLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/keyword_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/keyword_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="Keywords"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/messageLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16sp"
+                android:paddingTop="16sp"
+                android:paddingRight="16sp"
+                android:paddingBottom="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/keywordLayout">
+
+                <TextView
+                    android:id="@+id/messageText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text=""
+                    android:textAlignment="center"
+                    android:textSize="24sp"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <ListView
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:cacheColorHint="@color/black"
+                android:choiceMode="singleChoice"
+                android:divider="@color/black"
+                android:dividerHeight="0dp"
+                android:isScrollContainer="false"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/messageLayout"
+                tools:listitem="@layout/recipe_list_layout" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import comp4350.recipe_shop_app_version.Activity.FavoritesActivity;
 import comp4350.recipe_shop_app_version.Activity.LoginActivity;
 import comp4350.recipe_shop_app_version.Activity.RecipeInfoActivity;
 import comp4350.recipe_shop_app_version.Activity.RegisterActivity;
@@ -56,6 +57,12 @@ public class HTTPRequestTask implements Runnable{
         }
         else if(params.get(0).equals("deleteFavorite")) {
             deleteFavorite(urlString);
+        }
+        else if(params.get(0).equals("all-favorites")) {
+            getFavorites(urlString);
+        }
+        else if(params.get(0).equals("recipe")) {
+            getRecipe(urlString);
         }
     }//run
 
@@ -272,6 +279,51 @@ public class HTTPRequestTask implements Runnable{
             ((RecipeInfoActivity) activity).checkFavorite();
         }
     }//addFavorite
+
+
+    private void getFavorites(String urlString){
+        urlString += "/api/all-favorites/";
+        urlString += Services.username;
+
+        String[] reqParams = {"GET"};
+
+        String[] response = request(urlString, reqParams);
+
+        if(response[0].equals("200")){
+            System.out.println("getFavoritesSuccess");
+            ((FavoritesActivity) activity).getFavoritesSuccess(response[1]);
+        }
+        else if(response[0].equals("404")){
+            System.out.println("getFavoritesFail");
+            ((FavoritesActivity) activity).getFavoritesFail();
+        }
+        //error / other
+        else {
+            System.out.println("ERROR!");
+            ((FavoritesActivity) activity).getFavoritesFail();
+        }
+    }//search
+
+
+    private void getRecipe(String urlString){
+        urlString += "/api/recipe/";
+        urlString += params.get(2);
+        System.out.println(urlString);
+
+        String[] reqParams = {"GET"};
+
+        String[] response = request(urlString, reqParams);
+
+        if(response[0].equals("200")){
+            System.out.println("getRecipeSuccess");
+            ((FavoritesActivity) activity).getRecipeSuccess(Integer.parseInt(params.get(1)), response[1]);
+        }
+        //error / other
+        else {
+            System.out.println("ERROR!");
+            ((FavoritesActivity) activity).getRecipeFail(Integer.parseInt(params.get(1)));
+        }
+    }//search
 
 
     private String[] request(String urlString, String[] reqParams){

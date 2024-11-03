@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,6 +32,7 @@ public class RecipeListArrayAdapter extends ArrayAdapter {
     private List<ArrayList> objects;
     private LayoutInflater layoutInflater;
     private Activity activity;
+    private ArrayList<Boolean> visible;
     public RecipeListArrayAdapter(Context cont, int res, List<ArrayList> obj, Activity act){
         super(cont,res,obj.get(0));
         context = cont;
@@ -38,6 +40,10 @@ public class RecipeListArrayAdapter extends ArrayAdapter {
         objects = obj;
         layoutInflater = LayoutInflater.from(context);
         activity = act;
+        visible = new ArrayList<>();
+        for(int i=0;i<objects.get(0).size();i++){
+            visible.add(true);
+        }
     }//constructor
 
     @Override
@@ -53,10 +59,12 @@ public class RecipeListArrayAdapter extends ArrayAdapter {
         ImageView imageView = convertView.findViewById(R.id.recipeImage);
 
         try{
-            recipeName.setText(json.getJSONObject("recipe").get("label").toString());
+            if(json != null) {
+                recipeName.setText(json.getJSONObject("recipe").get("label").toString());
+                System.out.println("name " + position + " set");
+            }
             if(image != null){
                 imageView.setImageBitmap(image);
-                //imageView.setImageBitmap(Bitmap.createScaledBitmap(image, imageView.getWidth(), imageView.getHeight(), false));
                 System.out.println("image " + position + " set");
             }
             else{
@@ -64,6 +72,14 @@ public class RecipeListArrayAdapter extends ArrayAdapter {
             }
         }catch (Exception e){
             e.printStackTrace();
+        }
+        if(visible.get(position)){
+            convertView.setLayoutParams(new AbsListView.LayoutParams(-1,-2));
+            convertView.setVisibility(View.VISIBLE);
+        }
+        else{
+            convertView.setLayoutParams(new AbsListView.LayoutParams(-1,1));
+            convertView.setVisibility(View.GONE);
         }
         return convertView;
     }//getView
@@ -73,4 +89,18 @@ public class RecipeListArrayAdapter extends ArrayAdapter {
         objects.get(1).set(pos, img);
         notifyDataSetChanged();
     }//setImage
+
+    public void setRecipe(int pos, JSONObject recipe){
+        objects.get(0).set(pos, recipe);
+        notifyDataSetChanged();
+    }//setImage
+
+    public JSONObject getRecipe(int pos){
+        return (JSONObject) objects.get(0).get(pos);
+    }//getRecipe
+
+    public void setVisibility(int pos, Boolean bool){
+        visible.set(pos, bool);
+        notifyDataSetChanged();
+    }
 }

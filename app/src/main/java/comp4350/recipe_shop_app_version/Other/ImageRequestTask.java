@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
 
+import comp4350.recipe_shop_app_version.Activity.FavoritesActivity;
 import comp4350.recipe_shop_app_version.Activity.SearchActivity;
 
 public class ImageRequestTask implements Runnable{
@@ -65,7 +66,12 @@ public class ImageRequestTask implements Runnable{
         System.out.println(error);
         if(image != null) {
             //System.out.println("loadImage");
-            ((SearchActivity) activity).loadImage(position, image);
+            if(activity instanceof SearchActivity) {
+                ((SearchActivity) activity).loadImage(position, image);
+            }
+            else if(activity instanceof FavoritesActivity) {
+                ((FavoritesActivity) activity).loadImage(position, image);
+            }
         }
     }//run
 }
