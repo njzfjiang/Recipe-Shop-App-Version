@@ -176,7 +176,7 @@ public class HTTPRequestTask implements Runnable{
         for (int i=1;i<reqParams.length;i++) {
             body += reqParams[i];
         }
-        System.out.println(body);
+        //System.out.println(body);
 
         try {
             URL url = new URL(urlString);

@@ -4,12 +4,15 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -31,6 +34,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import comp4350.recipe_shop_app_version.Other.HTTPRequestTask;
+import comp4350.recipe_shop_app_version.Other.ImageRequestTask;
 import comp4350.recipe_shop_app_version.Other.RecipeListArrayAdapter;
 import comp4350.recipe_shop_app_version.Other.Services;
 import comp4350.recipe_shop_app_version.R;
@@ -50,6 +54,8 @@ public class SearchActivity extends AppCompatActivity {
     private ArrayList<JSONObject> recipes;
     private ArrayAdapter<JSONObject> listArrayAdapter;
     private Context context;
+    private ArrayList<Bitmap> images;
+    private ArrayList<ArrayList> listList;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -116,18 +122,18 @@ public class SearchActivity extends AppCompatActivity {
         mealTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                int position = adapterView.getPositionForView(view);
-                if (position == 0) {
+                int spinnerPosition = adapterView.getPositionForView(view);
+                if (spinnerPosition == 0) {
                     mealType = "";
-                } else if (position == 1) {
+                } else if (spinnerPosition == 1) {
                     mealType = "Breakfast";
-                } else if(position == 2){
+                } else if(spinnerPosition == 2){
                     mealType = "Dinner";
-                }else if(position == 3){
+                }else if(spinnerPosition == 3){
                     mealType = "Lunch";
-                }else if(position == 4){
+                }else if(spinnerPosition == 4){
                     mealType = "Snack";
-                }else if(position == 5){
+                }else if(spinnerPosition == 5){
                     mealType = "Teatime";
                 }
             }//onItemSelected
@@ -143,6 +149,8 @@ public class SearchActivity extends AppCompatActivity {
 
     private void search(){
         recipes = new ArrayList<>();
+        images = new ArrayList<>();
+        listList = new ArrayList<>();
         recipeList.setVisibility(View.GONE);
         try {
             keywords = keywordsInput.getText().toString();
@@ -192,39 +200,43 @@ public class SearchActivity extends AppCompatActivity {
             JSONObject searchResults = new JSONObject(response);
             int from = (int) searchResults.get("from");
             int to = (int) searchResults.get("to");
-            System.out.println("from: " + from);
-            System.out.println("to: " + to);
             if(to>0){
                 for(int i=from-1;i<to;i++){
                     JSONObject recipe = new JSONObject(searchResults.getJSONArray("hits").get(i).toString());
-                    System.out.println("hit " + i +": " + searchResults.getJSONArray("hits").get(i).toString());
-                    System.out.println(recipe);
                     recipes.add(recipe);
+                    images.add(null);
                 }
-                listArrayAdapter = new RecipeListArrayAdapter(this,R.layout.recipe_list_layout, recipes);
+                listList.add(recipes);
+                listList.add(images);
+                listArrayAdapter = new RecipeListArrayAdapter(this,R.layout.recipe_list_layout, listList, activity);
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         recipeList.setAdapter(listArrayAdapter);
-                        int height = 0;
-                        for(int i=0;i<listArrayAdapter.getCount();i++){
-                            View listItem = listArrayAdapter.getView(i,null, recipeList);
-                            listItem.measure(0,0);
-                            height += listItem.getMeasuredHeight() + recipeList.getDividerHeight();
-                        }
-                        ViewGroup.LayoutParams layoutParams = recipeList.getLayoutParams();
-                        layoutParams.height = height;
-                        recipeList.setLayoutParams(layoutParams);
+                        updateListView();
                         message.setVisibility(View.GONE);
                         recipeList.setVisibility(View.VISIBLE);
-                    }
+                        for(int i=from-1;i<to;i++){
+                            try {
+                                String url = recipes.get(i).getJSONObject("recipe").get("image").toString();
+                                ExecutorService executor = Executors.newSingleThreadExecutor();
+                                executor.submit(new ImageRequestTask(i, url, activity));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }//for
+                    }//run
                 });
 
                 recipeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        int position = adapterView.getPositionForView(view);
-                        //go to recipe
+                        int itemPosition = adapterView.getPositionForView(view);
+                        System.out.println(itemPosition);
+                        Services.recipe = recipes.get(itemPosition);
+                        Services.recipeImage = images.get(itemPosition);
+                        goToRecipe();
                     }
                 });
             }
@@ -235,7 +247,37 @@ public class SearchActivity extends AppCompatActivity {
             e.printStackTrace();
             searchFail();
         }
-    }//searchFail
+    }//searchSuccess
+
+    public void loadImage(int pos, Bitmap image){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((RecipeListArrayAdapter)recipeList.getAdapter()).setImage(pos, image);
+                updateListView();
+            }
+        });
+    }//loadImage
+
+    private void updateListView(){
+        ArrayAdapter arrayAdapter = (ArrayAdapter) recipeList.getAdapter();
+        int height = 0;
+        for(int i=0;i<arrayAdapter.getCount();i++){
+            View listItem = arrayAdapter.getView(i,null, recipeList);
+            listItem.measure(0,0);
+            height += listItem.getMeasuredHeight() + recipeList.getDividerHeight();
+        }
+        ViewGroup.LayoutParams layoutParams = recipeList.getLayoutParams();
+        layoutParams.height = height;
+        recipeList.setLayoutParams(layoutParams);
+    }//updateListView
+
+
+    private void goToRecipe(){
+        Intent finishIntent = new Intent(getApplicationContext(), RecipeInfoActivity.class);
+        finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        startActivity(finishIntent);
+    }//goToSearch
 
     private void goToSearch(){
         Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);

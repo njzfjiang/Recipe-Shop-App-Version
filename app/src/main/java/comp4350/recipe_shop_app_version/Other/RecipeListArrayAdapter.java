@@ -1,5 +1,6 @@
 package comp4350.recipe_shop_app_version.Other;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,47 +13,64 @@ import android.widget.TextView;
 
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import comp4350.recipe_shop_app_version.Activity.SearchActivity;
 import comp4350.recipe_shop_app_version.R;
 
 public class RecipeListArrayAdapter extends ArrayAdapter {
 
     private Context context;
     private int resource;
-    private List<JSONObject> objects;
+    private List<ArrayList> objects;
     private LayoutInflater layoutInflater;
-    public RecipeListArrayAdapter(Context cont, int res, List<JSONObject> obj){
-        super(cont,res,obj);
+    private Activity activity;
+    public RecipeListArrayAdapter(Context cont, int res, List<ArrayList> obj, Activity act){
+        super(cont,res,obj.get(0));
         context = cont;
         resource = res;
         objects = obj;
         layoutInflater = LayoutInflater.from(context);
-        System.out.println("constructor");
+        activity = act;
     }//constructor
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
-        System.out.println("getView");
-        JSONObject json = objects.get(position);
-        System.out.println(json);
+        JSONObject json = (JSONObject) objects.get(0).get(position);
+        Bitmap image = (Bitmap) objects.get(1).get(position);
 
         if(convertView == null){
             convertView = layoutInflater.inflate(resource,parent,false);
         }
 
         TextView recipeName = convertView.findViewById(R.id.recipeName);
-        //Bitmap image = BitmapFactory
-        //ImageView image = convertView.findViewById(R.id.recipeImage);
+        ImageView imageView = convertView.findViewById(R.id.recipeImage);
 
         try{
-            System.out.println(json.toString());
-            System.out.println(json.getJSONObject("recipe").toString());
-            System.out.println(json.getJSONObject("recipe").get("label").toString());
             recipeName.setText(json.getJSONObject("recipe").get("label").toString());
+            if(image != null){
+                imageView.setImageBitmap(image);
+                //imageView.setImageBitmap(Bitmap.createScaledBitmap(image, imageView.getWidth(), imageView.getHeight(), false));
+                System.out.println("image " + position + " set");
+            }
+            else{
+                //System.out.println("null image");
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
         return convertView;
     }//getView
+
+
+    public void setImage(int pos, Bitmap img){
+        objects.get(1).set(pos, img);
+        notifyDataSetChanged();
+    }//setImage
 }

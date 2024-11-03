@@ -31,4 +31,10 @@
     <string name="webpage_link">
         <a href="http://">Webpage Version</a>
     </string>
+    <string name="recipe_info_label">Recipe Info</string>
+    <string name="recipe_source_label">Recipe Source</string>
+    <string name="ingredients_label">Ingredients</string>
+    <string name="list_of_ingredients">List of Ingredients</string>
+    <string name="preparation_label">Preparation</string>
+    <string name="find_instructions_here">Find instructions here</string>
 </resources>
