@@ -63,16 +63,18 @@ public class RecipeInfoActivity extends AppCompatActivity {
         navBar = findViewById(R.id.bottomNavigationView);
         navBar.setSelectedItemId(R.id.search);
         recipeImage = findViewById(R.id.recipeImage);
-        recipeName = findViewById(R.id.recipeName);
+        recipeName = findViewById(R.id.recipeInfoTitle);
         recipeSource = findViewById(R.id.recipeSource);
         ingredients = findViewById(R.id.ingredients);
-        instructionLink = findViewById(R.id.edamame);
+        instructionLink = findViewById(R.id.instructionLink);
 
+        Bitmap img = null;
         String name = "";
         String source = "";
         ArrayList<String> ingredientList = new ArrayList<>();
         String link = "";
         try {
+            img = Services.recipeImage;
             name = Services.recipe.getJSONObject("recipe").get("label").toString();
             source = Services.recipe.getJSONObject("recipe").get("source").toString();
             JSONArray ingredientLines = (JSONArray) Services.recipe.getJSONObject("recipe").get("ingredientLines");
@@ -84,6 +86,7 @@ public class RecipeInfoActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        recipeImage.setImageBitmap(img);
         recipeName.setText(name);
         recipeSource.setText("Recipe from " + source);
         String ingredientText = "";
