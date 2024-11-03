@@ -45,8 +45,12 @@ import comp4350.recipe_shop_app_version.R;
 public class RecipeInfoActivity extends AppCompatActivity {
 
     private BottomNavigationView navBar;
-    ImageView recipeImage;
+    private ImageView recipeImage;
     private TextView recipeName, recipeSource, ingredients, instructionLink;
+    private Button addFavorite, removeFavorite;
+    private Activity activity;
+    private JSONObject recipe;
+    private Bitmap image;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -60,6 +64,10 @@ public class RecipeInfoActivity extends AppCompatActivity {
             return insets;
         });
 
+        activity = this;
+        recipe = Services.recipe;
+        image = Services.recipeImage;
+
         navBar = findViewById(R.id.bottomNavigationView);
         navBar.setSelectedItemId(R.id.search);
         recipeImage = findViewById(R.id.recipeImage);
@@ -67,26 +75,26 @@ public class RecipeInfoActivity extends AppCompatActivity {
         recipeSource = findViewById(R.id.recipeSource);
         ingredients = findViewById(R.id.ingredients);
         instructionLink = findViewById(R.id.instructionLink);
+        addFavorite = findViewById(R.id.favoriteButton);
+        removeFavorite = findViewById(R.id.unfavoriteButton);
 
-        Bitmap img = null;
         String name = "";
         String source = "";
         ArrayList<String> ingredientList = new ArrayList<>();
         String link = "";
         try {
-            img = Services.recipeImage;
-            name = Services.recipe.getJSONObject("recipe").get("label").toString();
-            source = Services.recipe.getJSONObject("recipe").get("source").toString();
-            JSONArray ingredientLines = (JSONArray) Services.recipe.getJSONObject("recipe").get("ingredientLines");
+            name = recipe.getJSONObject("recipe").get("label").toString();
+            source = recipe.getJSONObject("recipe").get("source").toString();
+            JSONArray ingredientLines = (JSONArray) recipe.getJSONObject("recipe").get("ingredientLines");
             for(int i=0;i<ingredientLines.length();i++){
                 ingredientList.add(ingredientLines.get(i).toString());
             }
-            link = Services.recipe.getJSONObject("recipe").get("url").toString();
+            link = recipe.getJSONObject("recipe").get("url").toString();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        recipeImage.setImageBitmap(img);
+        recipeImage.setImageBitmap(image);
         recipeName.setText(name);
         recipeSource.setText("Recipe from " + source);
         String ingredientText = "";
@@ -98,6 +106,8 @@ public class RecipeInfoActivity extends AppCompatActivity {
         String linkText = (String) instructionLink.getText();
         instructionLink.setText(Html.fromHtml("<a href=\"" + link + "\">" + linkText + "</a>"));
         instructionLink.setMovementMethod(LinkMovementMethod.getInstance());
+
+        checkFavorite();
 
         setListeners();
     }//onCreate
@@ -127,10 +137,72 @@ public class RecipeInfoActivity extends AppCompatActivity {
             }
             return success;
         });
+
+        addFavorite.setOnClickListener(view -> {
+            addToFavorites();
+        });
+
+        removeFavorite.setOnClickListener(view -> {
+            removeFromFavorites();
+        });
     }//setListeners
 
+    private void addToFavorites(){
+        try {
+            int indexID = recipe.getJSONObject("recipe").get("uri").toString().indexOf("_") + 1;
+            String recipeID = recipe.getJSONObject("recipe").get("uri").toString().substring(indexID);
+            String name = recipe.getJSONObject("recipe").get("label").toString();
+            String[] params = {"addFavorite", recipeID, name};
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(new HTTPRequestTask(params, activity));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//addToFavorites
+
+    private void removeFromFavorites(){
+        try {
+            int indexID = recipe.getJSONObject("recipe").get("uri").toString().indexOf("_") + 1;
+            String recipeID = recipe.getJSONObject("recipe").get("uri").toString().substring(indexID);
+            String name = recipe.getJSONObject("recipe").get("label").toString();
+            String[] params = {"deleteFavorite", recipeID, name};
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(new HTTPRequestTask(params, activity));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//removeFromFavorites
+
+    public void checkFavorite(){
+        try {
+            int indexID = recipe.getJSONObject("recipe").get("uri").toString().indexOf("_") + 1;
+            String recipeID = recipe.getJSONObject("recipe").get("uri").toString().substring(indexID);
+            String[] params = {"is-favorite", recipeID};
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(new HTTPRequestTask(params, activity));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//checkFavorite
+
+    public void updateFavoriteButtons(Boolean favorited){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(favorited){
+                    addFavorite.setVisibility(View.GONE);
+                    removeFavorite.setVisibility(View.VISIBLE);
+                }
+                else{
+                    addFavorite.setVisibility(View.VISIBLE);
+                    removeFavorite.setVisibility(View.GONE);
+                }
+            }
+        });
+    }//updateFavoriteButtons
+
     private void goToSearch(){
-        Intent finishIntent = new Intent(getApplicationContext(), RecipeInfoActivity.class);
+        Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(finishIntent);
     }//goToSearch

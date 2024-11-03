@@ -162,6 +162,42 @@
                     android:layout_below="@id/preparationTitle"/>
             </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/favoriteButtonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="32sp"
+                android:paddingTop="16sp"
+                android:paddingRight="32sp"
+                android:paddingBottom="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/preparationLayout">
+
+                <Button
+                    android:id="@+id/favoriteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:backgroundTint="@color/green"
+                    android:text="@string/add_to_favorites"
+                    android:textSize="20sp"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp" />
+
+                <Button
+                    android:id="@+id/unfavoriteButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/favoriteButton"
+                    android:layout_centerHorizontal="true"
+                    android:backgroundTint="@color/red"
+                    android:text="@string/remove_from_favorites"
+                    android:textSize="20sp"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="1dp" />
+            </RelativeLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import comp4350.recipe_shop_app_version.Activity.LoginActivity;
+import comp4350.recipe_shop_app_version.Activity.RecipeInfoActivity;
 import comp4350.recipe_shop_app_version.Activity.RegisterActivity;
 import comp4350.recipe_shop_app_version.Activity.SearchActivity;
 
@@ -46,6 +47,15 @@ public class HTTPRequestTask implements Runnable{
         }
         else if(params.get(0).equals("search")) {
             search(urlString);
+        }
+        else if(params.get(0).equals("is-favorite")) {
+            isFavorite(urlString);
+        }
+        else if(params.get(0).equals("addFavorite")) {
+            addFavorite(urlString);
+        }
+        else if(params.get(0).equals("deleteFavorite")) {
+            deleteFavorite(urlString);
         }
     }//run
 
@@ -164,6 +174,104 @@ public class HTTPRequestTask implements Runnable{
             ((SearchActivity) activity).searchFail();
         }
     }//search
+
+    private void isFavorite(String urlString){
+        String prefix = "?";
+        urlString += "/api/is-favorite/";
+        urlString += params.get(1);
+        if(!Services.username.isEmpty()) {
+            urlString += prefix + "username=" + Services.username;
+            prefix = "&";
+        }
+        String[] reqParams = {"GET"};
+
+        String[] response = request(urlString, reqParams);
+
+        if(response[0].equals("200")){
+            Boolean saved = false;
+            try {
+                JSONObject json = new JSONObject(response[1]);
+                saved = json.getBoolean("saved");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if(saved){
+                System.out.println("favorited");
+                ((RecipeInfoActivity)activity).updateFavoriteButtons(saved);
+            }
+            else{
+                System.out.println("notFavorited");
+                ((RecipeInfoActivity)activity).updateFavoriteButtons(saved);
+            }
+        }
+        //error / error
+        else {
+            System.out.println("ERROR!");
+            ((RecipeInfoActivity) activity).checkFavorite();
+        }
+    }//isFavorite
+
+
+    private void addFavorite(String urlString){
+        String prefix = "?";
+        urlString += "/api/favorites/";
+        urlString += params.get(1);
+        if(!Services.username.isEmpty()) {
+            urlString += prefix + "username=" + Services.username;
+            prefix = "&";
+        }
+        if(!params.get(2).isEmpty()) {
+            urlString += prefix + "title=" + params.get(2).replace(" ", "+");
+        }
+        String[] reqParams = {"POST"};
+
+        String[] response = request(urlString, reqParams);
+
+        if(response[0].equals("201")){
+            System.out.println("addedToFavorites");
+            ((RecipeInfoActivity) activity).checkFavorite();
+        }
+        else if(response[0].equals("409")){
+            System.out.println("alreadyAddedToFavorites");
+            ((RecipeInfoActivity) activity).checkFavorite();
+        }
+        //error / error
+        else {
+            System.out.println("ERROR!");
+            ((RecipeInfoActivity) activity).checkFavorite();
+        }
+    }//addFavorite
+
+
+    private void deleteFavorite(String urlString){
+        String prefix = "?";
+        urlString += "/api/favorites/";
+        urlString += params.get(1);
+        if(!Services.username.isEmpty()) {
+            urlString += prefix + "username=" + Services.username;
+            prefix = "&";
+        }
+        if(!params.get(2).isEmpty()) {
+            urlString += prefix + "title=" + params.get(2).replace(" ", "+");
+        }
+        String[] reqParams = {"DELETE"};
+
+        String[] response = request(urlString, reqParams);
+
+        if(response[0].equals("204")){
+            System.out.println("removedFromFavorites");
+            ((RecipeInfoActivity) activity).checkFavorite();
+        }
+        else if(response[0].equals("404")){
+            System.out.println("noFavoritedRecipeFound");
+            ((RecipeInfoActivity) activity).checkFavorite();
+        }
+        //error / error
+        else {
+            System.out.println("ERROR!");
+            ((RecipeInfoActivity) activity).checkFavorite();
+        }
+    }//addFavorite
 
 
     private String[] request(String urlString, String[] reqParams){

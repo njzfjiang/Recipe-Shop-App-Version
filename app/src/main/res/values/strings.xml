@@ -37,4 +37,6 @@
     <string name="list_of_ingredients">List of Ingredients</string>
     <string name="preparation_label">Preparation</string>
     <string name="find_instructions_here">Find instructions here</string>
+    <string name="remove_from_favorites">Remove from Favorites</string>
+    <string name="add_to_favorites">Add to Favorites</string>
 </resources>
