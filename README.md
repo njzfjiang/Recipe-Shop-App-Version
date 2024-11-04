@@ -20,7 +20,7 @@ Recipe Shop is an online platform built for anyone who loves to cook or needs a 
 Recipe Shop is a mobile and web based application that allows users to find recipes based on their specialized needs. The application relieves the user from the pain of having to google for recipes before each meal; and frustration when they find a recipe but did not have enough ingredients at home. With “Recipe Shop” they can simply enter the ingredients they have and have a list of recipes matching the ingredients. The main goal of Recipe Shop is to make the process of preparing meals and grocery shopping easier, and also provides a platform for recipe sharing and collecting.
 
 ### Getting Started with the project
-# Option 1 Android Studio
+## Option 1 Android Studio
 1. Clone the repository to your local machine
 2. Open the repository in Android Studio
 3. Wait for Android Studio to sync project files
@@ -28,13 +28,12 @@ Recipe Shop is a mobile and web based application that allows users to find reci
 5. Once device is running, run the app by pressing the play button at the top.
 6. In the app, set ip to the ip address the server is running on then login or register
 
-# Option 2 Android Device
-1. Clone the repository to your local machine
-2. Get the .apk file from Recipe-Shop-App-Version/app/build/outputs/apk/debug
-3. Copy .apk file to an android device (recommend Android version 14.0)
-4. Install the apk on the device
-5. Launch the app on the device
-6. In the app, set ip to the ip address the server is running on then login or register
+## Option 2 Android Device
+1. Get the .apk file from Recipe-Shop-App-Version Sprint-2-Release
+2. Copy .apk file to an android device (recommend Android version 14.0)
+3. Install the apk on the device
+4. Launch the app on the device
+5. In the app, set ip to the ip address the server is running on then login or register
 
 ### Documentation
 * [API Documentation](https://github.com/njzfjiang/Recipe-Shop/blob/main/Documentation/API%20Documentation.md)
