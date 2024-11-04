@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import comp4350.recipe_shop_app_version.Activity.FavoritesActivity;
+import comp4350.recipe_shop_app_version.Activity.GroceryActivity;
 import comp4350.recipe_shop_app_version.Activity.LoginActivity;
 import comp4350.recipe_shop_app_version.Activity.RecipeInfoActivity;
 import comp4350.recipe_shop_app_version.Activity.RegisterActivity;
@@ -63,6 +64,9 @@ public class HTTPRequestTask implements Runnable{
         }
         else if(params.get(0).equals("recipe")) {
             getRecipe(urlString);
+        }
+        else if(params.get(0).equals("generate-list")) {
+            getList(urlString);
         }
     }//run
 
@@ -316,12 +320,46 @@ public class HTTPRequestTask implements Runnable{
 
         if(response[0].equals("200")){
             System.out.println("getRecipeSuccess");
-            ((FavoritesActivity) activity).getRecipeSuccess(Integer.parseInt(params.get(1)), response[1]);
+            if(activity instanceof FavoritesActivity) {
+                ((FavoritesActivity) activity).getRecipeSuccess(Integer.parseInt(params.get(1)), response[1]);
+            }
+            else if(activity instanceof GroceryActivity) {
+                ((GroceryActivity) activity).getRecipeSuccess(Integer.parseInt(params.get(1)), response[1]);
+            }
         }
         //error / other
         else {
             System.out.println("ERROR!");
-            ((FavoritesActivity) activity).getRecipeFail(Integer.parseInt(params.get(1)));
+            if(activity instanceof FavoritesActivity) {
+                ((FavoritesActivity) activity).getRecipeFail(Integer.parseInt(params.get(1)));
+            }
+            else if(activity instanceof GroceryActivity) {
+                ((GroceryActivity) activity).getRecipeFail(Integer.parseInt(params.get(1)));
+            }
+        }
+    }//search
+
+    private void getList(String urlString){
+        urlString += "/api/generate-list/";
+        urlString += Services.username;
+        System.out.println(urlString);
+
+        String[] reqParams = {"GET"};
+
+        String[] response = request(urlString, reqParams);
+
+        if(response[0].equals("200")){
+            System.out.println("getRecipeSuccess");
+            ((GroceryActivity) activity).getListSuccess(response[1]);
+        }
+        else if(response[0].equals("404")){
+            System.out.println("getRecipeSuccess");
+            ((GroceryActivity) activity).getListFail();
+        }
+        //error / other
+        else {
+            System.out.println("ERROR!");
+            ((GroceryActivity) activity).getListFail();
         }
     }//search
 
