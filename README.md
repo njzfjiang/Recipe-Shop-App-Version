@@ -20,14 +20,21 @@ Recipe Shop is an online platform built for anyone who loves to cook or needs a 
 Recipe Shop is a mobile and web based application that allows users to find recipes based on their specialized needs. The application relieves the user from the pain of having to google for recipes before each meal; and frustration when they find a recipe but did not have enough ingredients at home. With “Recipe Shop” they can simply enter the ingredients they have and have a list of recipes matching the ingredients. The main goal of Recipe Shop is to make the process of preparing meals and grocery shopping easier, and also provides a platform for recipe sharing and collecting.
 
 ### Getting Started with the project
-0.1. Make sure you have [node js](https://nodejs.org/en) and [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) installed on your computer.
-1. Clone the Repository on your local machine, 
-2. Download and add the [.env](https://umanitoba-my.sharepoint.com/:u:/g/personal/chenm7_myumanitoba_ca/EazugoNavq5Eod2j-lNDNeYBTtr70KawhSwf4JJm95d2IA?e=fl0Y6H) file in the ```/server``` folder, instructions on how to get the .env file can be found [here](https://github.com/njzfjiang/Recipe-Shop/blob/dev/Documentation/Instructions%20for%20.env%20file.md)\
-    2.1 You may need to rename the .env file from "env" to ".env", the program will not work if named 'env'
-3. Run ```npm install``` in the ```/web-client``` and ```/server``` folder to install dependencies.
-4. Run ```npm run build``` in the ```/web-client``` folder
-5. Navigate to the ```/server``` folder and run ```npm start``` to start the project, it should be running on localhost:80
-6. To run tests for front end and back end, run ```npm test``` in the ```/web-client``` folder and ```/server``` folder.
+# Option 1 Android Studio
+1. Clone the repository to your local machine
+2. Open the repository in Android Studio
+3. Wait for Android Studio to sync project files
+4. Go to Device Manager and launch a device (one that has Android version 7.0 or later)
+5. Once device is running, run the app by pressing the play button at the top.
+6. In the app, set ip to the ip address the server is running on then login or register
+
+# Option 2 Android Device
+1. Clone the repository to your local machine
+2. Get the .apk file from Recipe-Shop-App-Version/app/build/outputs/apk/debug
+3. Copy .apk file to an android device (one that has Android version 7.0 or later)
+4. Install the apk on the device
+5. Launch the app on the device
+6. In the app, set ip to the ip address the server is running on then login or register
 
 ### Documentation
 * [API Documentation](https://github.com/njzfjiang/Recipe-Shop/blob/main/Documentation/API%20Documentation.md)
@@ -63,3 +70,5 @@ Recipe Shop is a mobile and web based application that allows users to find reci
 **Server**: Python, Node.js
 
 **Code Management**: Github
+
+**Android App**: Android Studio
