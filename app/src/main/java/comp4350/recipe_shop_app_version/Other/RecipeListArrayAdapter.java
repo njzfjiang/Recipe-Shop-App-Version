@@ -103,4 +103,8 @@ public class RecipeListArrayAdapter extends ArrayAdapter {
         visible.set(pos, bool);
         notifyDataSetChanged();
     }
+
+    public ArrayList<Boolean> getVisibility(){
+        return visible;
+    }//getVisibility
 }

@@ -58,8 +58,6 @@ public class GroceryActivity extends AppCompatActivity {
 
         username.setText(Services.username);
 
-        getList();
-
         setListeners();
     }//onCreate
 
@@ -149,6 +147,7 @@ public class GroceryActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }//each ingredient
+                    ingredientList += "\n\n";
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -73,8 +73,6 @@ public class FavoritesActivity extends AppCompatActivity {
 
         username.setText(Services.username);
 
-        getFavorites();
-
         setListeners();
     }//onCreate
 
@@ -239,11 +237,12 @@ public class FavoritesActivity extends AppCompatActivity {
     }//loadImage
 
     private void updateListView(){
-        ArrayAdapter arrayAdapter = (ArrayAdapter) favoriteList.getAdapter();
+        RecipeListArrayAdapter arrayAdapter = (RecipeListArrayAdapter) favoriteList.getAdapter();
+        ArrayList<Boolean> visible = arrayAdapter.getVisibility();
         int height = 0;
         for(int i=0;i<arrayAdapter.getCount();i++){
             View listItem = arrayAdapter.getView(i,null, favoriteList);
-            if(listItem.getVisibility() == View.VISIBLE) {
+            if(visible.get(i)) {
                 listItem.measure(0, 0);
                 height += listItem.getMeasuredHeight() + favoriteList.getDividerHeight();
             }
@@ -259,7 +258,7 @@ public class FavoritesActivity extends AppCompatActivity {
 
     public void getFavoritesFail(){
         message.setVisibility(View.VISIBLE);
-        message.setText("Error! Could not get favorites!");
+        message.setText("No favorites found!");
         message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red));
     }//getFavoritesFail
 
