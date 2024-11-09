@@ -7,19 +7,26 @@
     android:layout_height="match_parent"
     tools:context=".Activity.AboutActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/pageContent"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fadeScrollbars="true"
-        android:fadingEdgeLength="16dp"
+        android:requiresFadingEdge="vertical"
+        android:fadingEdgeLength="32dp"
         android:isScrollContainer="true"
         android:scrollIndicators="top|bottom"
         android:scrollbarSize="8dp"
         android:scrollbarStyle="insideOverlay"
-        android:scrollbarThumbVertical="@color/transparent_black_25"
         android:scrollbars="vertical"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/pageContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -28,6 +35,10 @@
             android:id="@+id/pageTitle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:paddingLeft="32dp"
+            android:paddingTop="64dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/pageTitle">
@@ -36,26 +47,48 @@
                 android:id="@+id/aboutTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="32sp"
-                android:paddingTop="64sp"
-                android:paddingRight="32sp"
-                android:paddingBottom="32sp"
                 android:text="@string/about_us_label"
                 android:textAlignment="center"
                 android:textSize="34sp" />
         </RelativeLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/logoImageLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32dp"
+            android:paddingTop="0dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pageTitle">
+
+            <ImageView
+                android:id="@+id/recipeImage"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:contentDescription="Recipe Image"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/logo_transparent_png" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <RelativeLayout
             android:id="@+id/infoLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="32sp"
-            android:paddingTop="16sp"
-            android:paddingRight="32sp"
-            android:paddingBottom="16sp"
+            android:paddingLeft="32dp"
+            android:paddingTop="0dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/pageTitle">
+            app:layout_constraintTop_toBottomOf="@id/logoImageLayout">
 
             <TextView
                 android:id="@+id/info"
@@ -67,16 +100,65 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/edamameLayout"
+            android:id="@+id/missionLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="32sp"
-            android:paddingTop="16sp"
-            android:paddingRight="32sp"
-            android:paddingBottom="16sp"
+            android:paddingLeft="32dp"
+            android:paddingTop="16dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/infoLayout">
+
+            <TextView
+                android:id="@+id/mission"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/our_mission"
+                android:textAlignment="center"
+                android:textSize="24sp" />
+        </RelativeLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/missionImageLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32dp"
+            android:paddingTop="0dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/missionLayout">
+
+            <ImageView
+                android:id="@+id/missionImage"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:contentDescription="Mission Image"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/mission" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <RelativeLayout
+            android:id="@+id/edamameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32dp"
+            android:paddingTop="16dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/missionImageLayout">
 
             <TextView
                 android:id="@+id/edamame"
@@ -93,10 +175,10 @@
             android:id="@+id/githubLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="32sp"
-            android:paddingTop="16sp"
-            android:paddingRight="32sp"
-            android:paddingBottom="16sp"
+            android:paddingLeft="32dp"
+            android:paddingTop="16dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/edamameLayout">
@@ -116,10 +198,10 @@
             android:id="@+id/githubAppLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="32sp"
-            android:paddingTop="16sp"
-            android:paddingRight="32sp"
-            android:paddingBottom="16sp"
+            android:paddingLeft="32dp"
+            android:paddingTop="16dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/githubLayout">
@@ -139,10 +221,10 @@
             android:id="@+id/webpageLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="32sp"
-            android:paddingTop="16sp"
-            android:paddingRight="32sp"
-            android:paddingBottom="16sp"
+            android:paddingLeft="32dp"
+            android:paddingTop="16dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/githubAppLayout">
@@ -159,6 +241,7 @@
         </RelativeLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

@@ -37,11 +37,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.register_layout), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         activity = this;
         ipInput = findViewById(R.id.ip_input);
@@ -142,7 +137,7 @@ public class RegisterActivity extends AppCompatActivity {
     public void registerAttempt(){
         message.setVisibility(View.VISIBLE);
         message.setText("...");
-        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.black));
+        message.setTextColor(usernameInput.getCurrentTextColor());
     }//loginAttempt
 
     public void userExists(){
@@ -160,7 +155,7 @@ public class RegisterActivity extends AppCompatActivity {
     public void userExistsAttempt(){
         messageUsername.setVisibility(View.GONE);
         messageUsername.setText("...");
-        messageUsername.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.black));
+        messageUsername.setTextColor(usernameInput.getCurrentTextColor());
     }//userExists
 
 }

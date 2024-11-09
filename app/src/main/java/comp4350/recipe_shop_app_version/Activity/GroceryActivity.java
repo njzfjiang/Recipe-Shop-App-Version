@@ -43,11 +43,6 @@ public class GroceryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_grocery);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.grocery_layout), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         activity = this;
         navBar = findViewById(R.id.bottomNavigationView);
@@ -102,7 +97,7 @@ public class GroceryActivity extends AppCompatActivity {
     private void getListAttempt(){
         message.setVisibility(View.VISIBLE);
         message.setText("Fetching ...");
-        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.black));
+        message.setTextColor(username.getCurrentTextColor());
     }//getListAttempt
 
     public void getListSuccess(String response){

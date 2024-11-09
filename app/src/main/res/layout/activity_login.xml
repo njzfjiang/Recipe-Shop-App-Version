@@ -8,202 +8,201 @@
     tools:context=".Activity.LoginActivity"
     >
 
-    <RelativeLayout
-        android:id="@+id/pageTitle"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingLeft="32sp"
-        android:paddingRight="32sp"
-        android:paddingTop="64sp"
-        android:paddingBottom="32sp"
+        android:fadeScrollbars="true"
+        android:fadingEdgeLength="32dp"
+        android:isScrollContainer="true"
+        android:requiresFadingEdge="vertical"
+        android:scrollIndicators="top|bottom"
+        android:scrollbarSize="8dp"
+        android:scrollbarStyle="insideOverlay"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/loginTitle"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/pageContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/login_label"
-            android:textAlignment="center"
-            android:textSize="34sp" />
-    </RelativeLayout>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    <RelativeLayout
-        android:id="@+id/ipLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="32sp"
-        android:paddingRight="32sp"
-        android:paddingTop="16sp"
-        android:paddingBottom="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pageTitle">
-
-        <TextView
-            android:id="@+id/ip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="@string/ip_label"
-            android:textSize="24sp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/ip">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ip_input"
+            <RelativeLayout
+                android:id="@+id/pageTitle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="input host ip address"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </RelativeLayout>
+                android:layout_height="0dp"
+                android:paddingLeft="32dp"
+                android:paddingTop="64dp"
+                android:paddingRight="32dp"
+                android:paddingBottom="32dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-    <RelativeLayout
-        android:id="@+id/usernameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="32sp"
-        android:paddingRight="32sp"
-        android:paddingTop="16sp"
-        android:paddingBottom="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ipLayout">
+                <TextView
+                    android:id="@+id/loginTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/login_label"
+                    android:textAlignment="center"
+                    android:textSize="34sp" />
+            </RelativeLayout>
 
-        <TextView
-            android:id="@+id/username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="@string/username_label"
-            android:textSize="24sp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/username">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/username_input"
+            <RelativeLayout
+                android:id="@+id/ipLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="input username"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </RelativeLayout>
+                android:layout_height="wrap_content"
+                android:paddingLeft="32dp"
+                android:paddingTop="16dp"
+                android:paddingRight="32dp"
+                android:paddingBottom="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pageTitle">
 
-    <RelativeLayout
-        android:id="@+id/passwordLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="32sp"
-        android:paddingRight="32sp"
-        android:paddingTop="16sp"
-        android:paddingBottom="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/usernameLayout">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="@string/password_label"
-            android:textSize="24sp" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/ip_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="input server ip address"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </RelativeLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/password">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/password_input"
+            <RelativeLayout
+                android:id="@+id/usernameLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="input password"
-                android:inputType="text|textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
-    </RelativeLayout>
+                android:layout_height="wrap_content"
+                android:paddingLeft="32dp"
+                android:paddingTop="16dp"
+                android:paddingRight="32dp"
+                android:paddingBottom="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ipLayout">
 
-    <RelativeLayout
-        android:id="@+id/messageLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="16sp"
-        android:paddingTop="16sp"
-        android:paddingRight="16sp"
-        android:paddingBottom="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/passwordLayout">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/messageText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:visibility="gone"
-            android:text=""
-            android:textAlignment="center"
-            android:textSize="24sp" />
-    </RelativeLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/username_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="input username"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/loginButtonLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="32sp"
-        android:paddingRight="32sp"
-        android:paddingTop="16sp"
-        android:paddingBottom="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/messageLayout">
+            <RelativeLayout
+                android:id="@+id/passwordLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="32dp"
+                android:paddingTop="16dp"
+                android:paddingRight="32dp"
+                android:paddingBottom="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/usernameLayout">
 
-        <Button
-            android:id="@+id/loginButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="@string/login_label"
-            android:textSize="28sp" />
-    </RelativeLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:id="@+id/registerLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingLeft="32sp"
-        android:paddingRight="32sp"
-        android:paddingTop="16sp"
-        android:paddingBottom="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/loginButtonLayout">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/password_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:hint="input password"
+                        android:inputType="text|textPassword" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </RelativeLayout>
 
-        <TextView
-            android:id="@+id/registerPrompt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:text="@string/register_prompt"
-            android:textSize="24sp" />
+            <RelativeLayout
+                android:id="@+id/messageLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingTop="16dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/passwordLayout">
 
-        <Button
-            android:id="@+id/registerButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/registerPrompt"
-            android:layout_centerHorizontal="true"
-            android:text="Register"
-            android:textSize="28sp" />
-    </RelativeLayout>
+                <TextView
+                    android:id="@+id/messageText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text=""
+                    android:textAlignment="center"
+                    android:textSize="24sp"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/loginButtonLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="32dp"
+                android:paddingTop="16dp"
+                android:paddingRight="32dp"
+                android:paddingBottom="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/messageLayout">
+
+                <Button
+                    android:id="@+id/loginButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/login_label"
+                    android:textSize="28sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/registerLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="32dp"
+                android:paddingTop="16dp"
+                android:paddingRight="32dp"
+                android:paddingBottom="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/loginButtonLayout">
+
+                <TextView
+                    android:id="@+id/registerPrompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerInParent="true"
+                    android:text="@string/register_prompt"
+                    android:textSize="24sp" />
+
+                <Button
+                    android:id="@+id/registerButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/registerPrompt"
+                    android:layout_centerHorizontal="true"
+                    android:text="Register"
+                    android:textSize="28sp" />
+            </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

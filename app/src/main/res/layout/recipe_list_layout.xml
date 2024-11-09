@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/black"
     android:orientation="horizontal"
     android:paddingTop="1dp"
     android:paddingBottom="0dp"
@@ -13,19 +12,19 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
         android:orientation="horizontal"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
         android:paddingHorizontal="14dp">
 
-    <ImageView
-        android:id="@+id/recipeImage"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:contentDescription="Recipe Image"
-        android:scaleType="fitCenter"
-        tools:srcCompat="@drawable/logo_transparent" />
+        <ImageView
+            android:id="@+id/recipeImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerVertical="true"
+            android:contentDescription="Recipe Image"
+            android:scaleType="fitCenter"
+            tools:srcCompat="@drawable/logo_transparent_png" />
 
     <TextView
         android:id="@+id/recipeName"
@@ -36,7 +35,6 @@
         android:text="recipeName"
         android:textAlignment="center"
         android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-        android:textColor="@color/black"
         android:textSize="24sp" />
 </RelativeLayout>
 </RelativeLayout>

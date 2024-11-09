@@ -57,11 +57,12 @@ public class FavoritesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_favorites);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.favorites_layout), (v, insets) -> {
+        /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.favorites_layout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+         */
 
         activity = this;
         navBar = findViewById(R.id.bottomNavigationView);
@@ -150,7 +151,7 @@ public class FavoritesActivity extends AppCompatActivity {
     private void getFavoritesAttempt(){
         message.setVisibility(View.VISIBLE);
         message.setText("Fetching ...");
-        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.black));
+        message.setTextColor(keywordsInput.getCurrentTextColor());
     }//getFavoritesAttempt
 
     public void getFavoritesSuccess(String response){

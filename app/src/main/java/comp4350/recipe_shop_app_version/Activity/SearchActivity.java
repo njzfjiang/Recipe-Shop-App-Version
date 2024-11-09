@@ -6,9 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
+import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
+import android.os.Looper;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.WindowInsets;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
@@ -26,6 +36,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONObject;
 
@@ -56,6 +67,11 @@ public class SearchActivity extends AppCompatActivity {
     private Context context;
     private ArrayList<Bitmap> images;
     private ArrayList<ArrayList> listList;
+    private View activityLayout;
+    private float yStart;
+    private int yDead = 50;
+    private WindowInsets defaultInsets;
+    private ArrayList<Integer> heights;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -63,13 +79,10 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_search);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.search_layout), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
 
         activity = this;
+        activityLayout = findViewById(R.id.search_layout);
         navBar = findViewById(R.id.bottomNavigationView);
         navBar.setSelectedItemId(R.id.search);
         mealTypeSpinner = findViewById(R.id.meal_type_spinner);
@@ -81,7 +94,6 @@ public class SearchActivity extends AppCompatActivity {
         recipeList = findViewById(R.id.listView);
         context = this;
 
-        //recipes = new ArrayList<>();
 
         ArrayList<String> mealTypeOptions = new ArrayList<>();
         mealTypeOptions.add("--meal type--");
@@ -145,12 +157,129 @@ public class SearchActivity extends AppCompatActivity {
             search();
         });
 
+        keywordsInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(i == EditorInfo.IME_ACTION_SEARCH || keyEvent != null){
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+                    search();
+                    navBar.setVisibility(View.VISIBLE);
+                }
+                return true;
+            }
+        });
+
+        minTimeInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(i == EditorInfo.IME_ACTION_SEARCH || keyEvent != null){
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+                    search();
+                    navBar.setVisibility(View.VISIBLE);
+                }
+                return true;
+            }
+        });
+
+        maxTimeInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(i == EditorInfo.IME_ACTION_SEARCH || keyEvent != null){
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+                    search();
+                    navBar.setVisibility(View.VISIBLE);
+                }
+                return true;
+            }
+        });
+
+
+        keywordsInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(keywordsInput.hasFocus() || minTimeInput.hasFocus() || maxTimeInput.hasFocus()){
+                    navBar.setVisibility(View.GONE);
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+                }
+            }
+        });
+
+        minTimeInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(keywordsInput.hasFocus() || minTimeInput.hasFocus() || maxTimeInput.hasFocus()){
+                    navBar.setVisibility(View.GONE);
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+                }
+            }
+        });
+
+        maxTimeInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(keywordsInput.hasFocus() || minTimeInput.hasFocus() || maxTimeInput.hasFocus()){
+                    navBar.setVisibility(View.GONE);
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+                }
+            }
+        });
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(getWindow().getDecorView(), (v, insets) -> {
+            boolean imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+            if(!imeVisible){
+                navBar.setVisibility(View.VISIBLE);
+            }
+            else{
+                navBar.setVisibility(View.GONE);
+            }
+            return insets;
+        });
+
     }//setListeners
+
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event){
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            yStart = event.getY();
+        }
+        else if(event.getAction() == MotionEvent.ACTION_UP){
+            //if tap
+            if(!(event.getY() < yStart - yDead || event.getY() > yStart + yDead)) {
+                View touchedView = getCurrentFocus();
+                if (touchedView instanceof TextInputEditText) {
+                    Rect viewBounds = new Rect();
+                    touchedView.getGlobalVisibleRect(viewBounds);
+                    if (!viewBounds.contains((int) event.getRawX(), (int) event.getRawY())) {
+                        touchedView.clearFocus();
+                        //hide keyboard
+                        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                        inputMethodManager.hideSoftInputFromWindow(touchedView.getWindowToken(), 0);
+                        navBar.setVisibility(View.VISIBLE);
+                    }//outside bounds
+                }//TextInputEditText
+                else{
+                    navBar.setVisibility(View.VISIBLE);
+                }
+            }//within dead zone
+        }//touch release
+
+        return super.dispatchTouchEvent(event);
+    }
+
 
     private void search(){
         recipes = new ArrayList<>();
         images = new ArrayList<>();
         listList = new ArrayList<>();
+        heights = new ArrayList<>();
         recipeList.setVisibility(View.GONE);
         try {
             keywords = keywordsInput.getText().toString();
@@ -173,7 +302,7 @@ public class SearchActivity extends AppCompatActivity {
     private void searchAttempt(){
         message.setVisibility(View.VISIBLE);
         message.setText("Searching ...");
-        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.black));
+        message.setTextColor(keywordsInput.getCurrentTextColor());
     }//searchAttempt
 
     private void keywordsEmpty(){
@@ -185,7 +314,7 @@ public class SearchActivity extends AppCompatActivity {
     private void searchEmpty(){
         message.setVisibility(View.VISIBLE);
         message.setText("No results.");
-        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.black));
+        message.setTextColor(keywordsInput.getCurrentTextColor());
     }//searchEmpty
 
     public void searchFail(){
@@ -205,6 +334,7 @@ public class SearchActivity extends AppCompatActivity {
                     JSONObject recipe = new JSONObject(searchResults.getJSONArray("hits").get(i).toString());
                     recipes.add(recipe);
                     images.add(null);
+                    heights.add(0);
                 }
                 listList.add(recipes);
                 listList.add(images);
@@ -261,16 +391,24 @@ public class SearchActivity extends AppCompatActivity {
     }//loadImage
 
     private void updateListView(){
-        ArrayAdapter arrayAdapter = (ArrayAdapter) recipeList.getAdapter();
-        int height = 0;
-        for(int i=0;i<arrayAdapter.getCount();i++){
-            View listItem = arrayAdapter.getView(i,null, recipeList);
-            listItem.measure(0,0);
-            height += listItem.getMeasuredHeight() + recipeList.getDividerHeight();
-        }
         ViewGroup.LayoutParams layoutParams = recipeList.getLayoutParams();
-        layoutParams.height = height;
+        layoutParams.height = 1000000000; //set big so all list elements draw before get their heights
         recipeList.setLayoutParams(layoutParams);
+
+        recipeList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                recipeList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                int height = 0;
+                for(int i=0;i<recipeList.getChildCount();i++){
+                    View listItem = recipeList.getChildAt(i);
+                    height += listItem.getHeight() + recipeList.getDividerHeight();
+                }
+                ViewGroup.LayoutParams layoutParams = recipeList.getLayoutParams();
+                layoutParams.height = height;
+                recipeList.setLayoutParams(layoutParams);
+            }
+        });
     }//updateListView
 
 
