@@ -109,6 +109,12 @@ public class SearchActivity extends AppCompatActivity {
         mealTypeSpinner.setSelection(0);
     }//onCreate
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        navBar.getMenu().findItem(R.id.search).setChecked(true);
+    }//onResume
+
     public void setListeners(){
         navBar.setOnNavigationItemSelectedListener(item -> {
             boolean success = false;
@@ -405,7 +411,7 @@ public class SearchActivity extends AppCompatActivity {
                     height += listItem.getHeight() + recipeList.getDividerHeight();
                 }
                 ViewGroup.LayoutParams layoutParams = recipeList.getLayoutParams();
-                layoutParams.height = height;
+                layoutParams.height = height - recipeList.getDividerHeight();
                 recipeList.setLayoutParams(layoutParams);
             }
         });
@@ -415,36 +421,42 @@ public class SearchActivity extends AppCompatActivity {
     private void goToRecipe(){
         Intent finishIntent = new Intent(getApplicationContext(), RecipeInfoActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToSearch
 
     private void goToSearch(){
         Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToSearch
 
     private void goToFavorites(){
         Intent finishIntent = new Intent(getApplicationContext(), FavoritesActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToFavorites
 
     private void goToGrocery(){
         Intent finishIntent = new Intent(getApplicationContext(), GroceryActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToGrocery
 
     private void goToSettings(){
         Intent finishIntent = new Intent(getApplicationContext(), SettingsActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToSettings
 
     private void goToAbout(){
         Intent finishIntent = new Intent(getApplicationContext(), AboutActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToAbout
 }

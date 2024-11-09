@@ -4,11 +4,17 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -23,6 +29,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,6 +57,9 @@ public class FavoritesActivity extends AppCompatActivity {
     private ArrayList<Bitmap> images;
     private ArrayList<ArrayList> listList;
     private ArrayAdapter<JSONObject> listArrayAdapter;
+    private float yStart;
+    private int yDead = 50;
+    private ArrayList<Boolean> visible;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -80,6 +90,7 @@ public class FavoritesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        navBar.getMenu().findItem(R.id.favorites).setChecked(true);
         getFavorites();
     }//onResume
 
@@ -131,11 +142,61 @@ public class FavoritesActivity extends AppCompatActivity {
                 }
             }
         });
+
+        /*
+        keywordsInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(i == EditorInfo.IME_ACTION_SEARCH || keyEvent != null){
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+                    search();
+                    navBar.setVisibility(View.VISIBLE);
+                }
+                return true;
+            }
+        });*/
+
+        ViewCompat.setOnApplyWindowInsetsListener(getWindow().getDecorView(), (v, insets) -> {
+            boolean imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+            if(!imeVisible){
+                navBar.setVisibility(View.VISIBLE);
+            }
+            else{
+                navBar.setVisibility(View.GONE);
+            }
+            return insets;
+        });
     }//setListeners
 
-    private void search(){
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event){
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            yStart = event.getY();
+        }
+        else if(event.getAction() == MotionEvent.ACTION_UP){
+            //if tap
+            if(!(event.getY() < yStart - yDead || event.getY() > yStart + yDead)) {
+                View touchedView = getCurrentFocus();
+                if (touchedView instanceof TextInputEditText) {
+                    Rect viewBounds = new Rect();
+                    touchedView.getGlobalVisibleRect(viewBounds);
+                    if (!viewBounds.contains((int) event.getRawX(), (int) event.getRawY())) {
+                        touchedView.clearFocus();
+                        //hide keyboard
+                        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                        inputMethodManager.hideSoftInputFromWindow(touchedView.getWindowToken(), 0);
+                        navBar.setVisibility(View.VISIBLE);
+                    }//outside bounds
+                }//TextInputEditText
+                else{
+                    navBar.setVisibility(View.VISIBLE);
+                }
+            }//within dead zone
+        }//touch release
 
-    }//search
+        return super.dispatchTouchEvent(event);
+    }
 
     private void getFavorites(){
         recipes = new ArrayList<>();
@@ -238,6 +299,27 @@ public class FavoritesActivity extends AppCompatActivity {
     }//loadImage
 
     private void updateListView(){
+        ViewGroup.LayoutParams layoutParams = favoriteList.getLayoutParams();
+        layoutParams.height = 1000000000; //set big so all list elements draw before get their heights
+        favoriteList.setLayoutParams(layoutParams);
+
+        favoriteList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                favoriteList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                visible = ((RecipeListArrayAdapter)favoriteList.getAdapter()).getVisibility();
+                int height = 0;
+                for(int i=0;i<favoriteList.getChildCount();i++){
+                    View listItem = favoriteList.getChildAt(i);
+                    height += listItem.getHeight() + favoriteList.getDividerHeight();
+                }
+                ViewGroup.LayoutParams layoutParams = favoriteList.getLayoutParams();
+                layoutParams.height = height - favoriteList.getDividerHeight();
+                favoriteList.setLayoutParams(layoutParams);
+            }
+        });
+
+        /*
         RecipeListArrayAdapter arrayAdapter = (RecipeListArrayAdapter) favoriteList.getAdapter();
         ArrayList<Boolean> visible = arrayAdapter.getVisibility();
         int height = 0;
@@ -251,6 +333,7 @@ public class FavoritesActivity extends AppCompatActivity {
         ViewGroup.LayoutParams layoutParams = favoriteList.getLayoutParams();
         layoutParams.height = height;
         favoriteList.setLayoutParams(layoutParams);
+         */
     }//updateListView
 
     public void getRecipeFail(int pos){
@@ -267,36 +350,42 @@ public class FavoritesActivity extends AppCompatActivity {
     private void goToRecipe(){
         Intent finishIntent = new Intent(getApplicationContext(), RecipeInfoActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToSearch
 
     private void goToSearch(){
         Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToSearch
 
     private void goToFavorites(){
         Intent finishIntent = new Intent(getApplicationContext(), FavoritesActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToFavorites
 
     private void goToGrocery(){
         Intent finishIntent = new Intent(getApplicationContext(), GroceryActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToGrocery
 
     private void goToSettings(){
         Intent finishIntent = new Intent(getApplicationContext(), SettingsActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToSettings
 
     private void goToAbout(){
         Intent finishIntent = new Intent(getApplicationContext(), AboutActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToAbout
 }

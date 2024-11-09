@@ -1,6 +1,7 @@
 package comp4350.recipe_shop_app_version.Activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -23,6 +24,7 @@ public class SettingsActivity extends AppCompatActivity {
     private BottomNavigationView navBar;
     private TextView ipInput, usernameInput;
     private Button logoutButton;
+    private Activity activity;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -30,6 +32,8 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_settings);
+
+        activity = this;
 
         navBar = findViewById(R.id.bottomNavigationView);
         navBar.setSelectedItemId(R.id.settings);
@@ -42,6 +46,12 @@ public class SettingsActivity extends AppCompatActivity {
 
         setListeners();
     }//onCreate
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        navBar.getMenu().findItem(R.id.settings).setChecked(true);
+    }//onResume
 
     public void setListeners(){
         logoutButton.setOnClickListener(view -> {
@@ -75,6 +85,7 @@ public class SettingsActivity extends AppCompatActivity {
         Services.confirm = "";
         Intent finishIntent = new Intent(getApplicationContext(), LoginActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
         this.finish();
     }
@@ -82,30 +93,35 @@ public class SettingsActivity extends AppCompatActivity {
     private void goToSearch(){
         Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToSearch
 
     private void goToFavorites(){
         Intent finishIntent = new Intent(getApplicationContext(), FavoritesActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToFavorites
 
     private void goToGrocery(){
         Intent finishIntent = new Intent(getApplicationContext(), GroceryActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToGrocery
 
     private void goToSettings(){
         Intent finishIntent = new Intent(getApplicationContext(), SettingsActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToSettings
 
     private void goToAbout(){
         Intent finishIntent = new Intent(getApplicationContext(), AboutActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToAbout
 }

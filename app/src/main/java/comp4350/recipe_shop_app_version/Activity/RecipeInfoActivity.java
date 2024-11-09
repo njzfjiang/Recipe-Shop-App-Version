@@ -51,6 +51,7 @@ public class RecipeInfoActivity extends AppCompatActivity {
     private Activity activity;
     private JSONObject recipe;
     private Bitmap image;
+    private String previousActivity;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -64,7 +65,24 @@ public class RecipeInfoActivity extends AppCompatActivity {
         image = Services.recipeImage;
 
         navBar = findViewById(R.id.bottomNavigationView);
-        navBar.setSelectedItemId(R.id.search);
+        previousActivity = (String) this.getIntent().getExtras().get("CallingActivity");
+        System.out.println(previousActivity);
+        if(previousActivity.equalsIgnoreCase("Activity.SearchActivity")){
+            navBar.setSelectedItemId(R.id.search);
+        }
+        else if(previousActivity.equalsIgnoreCase("Activity.FavoritesActivity")){
+            navBar.setSelectedItemId(R.id.favorites);
+        }
+        else if(previousActivity.equalsIgnoreCase("Activity.GroceryActivity")){
+            navBar.setSelectedItemId(R.id.grocery);
+        }
+        else if(previousActivity.equalsIgnoreCase("Activity.SettingsActivity")){
+            navBar.setSelectedItemId(R.id.settings);
+        }
+        else if(previousActivity.equalsIgnoreCase("Activity.AboutActivity")){
+            navBar.setSelectedItemId(R.id.about_us);
+        }
+
         recipeImage = findViewById(R.id.recipeImage);
         recipeName = findViewById(R.id.recipeInfoTitle);
         recipeSource = findViewById(R.id.recipeSource);
@@ -106,6 +124,26 @@ public class RecipeInfoActivity extends AppCompatActivity {
 
         setListeners();
     }//onCreate
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(previousActivity.equalsIgnoreCase("Activity.SearchActivity")){
+            navBar.getMenu().findItem(R.id.search).setChecked(true);
+        }
+        else if(previousActivity.equalsIgnoreCase("Activity.FavoritesActivity")){
+            navBar.getMenu().findItem(R.id.favorites).setChecked(true);
+        }
+        else if(previousActivity.equalsIgnoreCase("Activity.GroceryActivity")){
+            navBar.getMenu().findItem(R.id.grocery).setChecked(true);
+        }
+        else if(previousActivity.equalsIgnoreCase("Activity.SettingsActivity")){
+            navBar.getMenu().findItem(R.id.settings).setChecked(true);
+        }
+        else if(previousActivity.equalsIgnoreCase("Activity.AboutActivity")){
+            navBar.getMenu().findItem(R.id.about_us).setChecked(true);
+        }
+    }//onResume
 
     public void setListeners(){
         navBar.setOnNavigationItemSelectedListener(item -> {
@@ -199,30 +237,35 @@ public class RecipeInfoActivity extends AppCompatActivity {
     private void goToSearch(){
         Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToSearch
 
     private void goToFavorites(){
         Intent finishIntent = new Intent(getApplicationContext(), FavoritesActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToFavorites
 
     private void goToGrocery(){
         Intent finishIntent = new Intent(getApplicationContext(), GroceryActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToGrocery
 
     private void goToSettings(){
         Intent finishIntent = new Intent(getApplicationContext(), SettingsActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToSettings
 
     private void goToAbout(){
         Intent finishIntent = new Intent(getApplicationContext(), AboutActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
     }//goToAbout
 }

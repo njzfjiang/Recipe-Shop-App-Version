@@ -5,6 +5,7 @@
     android:id="@+id/favorites_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".Activity.FavoritesActivity"
     >
 
@@ -96,6 +97,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:hint="Keywords"
+                        android:imeOptions="actionDone"
                         android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -129,7 +131,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:choiceMode="singleChoice"
-                android:dividerHeight="0dp"
+                android:dividerHeight="-1px"
+                android:divider="@null"
                 android:isScrollContainer="false"
                 android:nestedScrollingEnabled="false"
                 app:layout_constraintBottom_toBottomOf="parent"
