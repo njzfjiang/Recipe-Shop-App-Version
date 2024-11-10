@@ -161,7 +161,7 @@ public class GroceryActivity extends AppCompatActivity {
 
     public void getListFail(){
         message.setVisibility(View.VISIBLE);
-        message.setText("Error! Failed to get grocery list!");
+        message.setText("No grocery list found!");
         message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red));
     }//getListFail
 
