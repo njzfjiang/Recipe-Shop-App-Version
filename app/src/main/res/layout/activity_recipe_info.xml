@@ -122,7 +122,7 @@
                     android:paddingBottom="16dp"
                     android:text="@string/list_of_ingredients"
                     android:textAlignment="center"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:layout_below="@id/ingredientsTitle"/>
             </RelativeLayout>
 
@@ -181,7 +181,9 @@
                     android:layout_centerHorizontal="true"
                     android:backgroundTint="@color/green"
                     android:text="@string/add_to_favorites"
+                    android:textColor="?colorSurfaceContainer"
                     android:textSize="20sp"
+                    app:strokeColor="?colorAccent"
                     app:strokeWidth="1dp" />
 
                 <Button
@@ -192,7 +194,9 @@
                     android:layout_centerHorizontal="true"
                     android:backgroundTint="@color/red"
                     android:text="@string/remove_from_favorites"
+                    android:textColor="?colorSurfaceContainer"
                     android:textSize="20sp"
+                    app:strokeColor="?colorAccent"
                     app:strokeWidth="1dp" />
             </RelativeLayout>
 

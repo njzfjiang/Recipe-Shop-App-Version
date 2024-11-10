@@ -7,16 +7,16 @@
     android:orientation="horizontal"
     android:paddingTop="1dp"
     android:paddingBottom="1dp"
-    android:paddingHorizontal="2dp"
+    android:paddingHorizontal="1dp"
     android:background="?colorAccent">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingTop="14dp"
-        android:paddingBottom="14dp"
-        android:paddingHorizontal="14dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:paddingHorizontal="15dp"
         android:background="?colorSurfaceContainer">
 
         <ImageView

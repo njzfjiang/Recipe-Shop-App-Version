@@ -100,7 +100,7 @@ public class RecipeInfoActivity extends AppCompatActivity {
             source = recipe.getJSONObject("recipe").get("source").toString();
             JSONArray ingredientLines = (JSONArray) recipe.getJSONObject("recipe").get("ingredientLines");
             for(int i=0;i<ingredientLines.length();i++){
-                ingredientList.add(ingredientLines.get(i).toString());
+                ingredientList.add("\u2022" + ingredientLines.get(i).toString() + "\n");
             }
             link = recipe.getJSONObject("recipe").get("url").toString();
         } catch (Exception e) {
