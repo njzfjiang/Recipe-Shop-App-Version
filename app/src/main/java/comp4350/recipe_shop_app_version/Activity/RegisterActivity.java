@@ -3,10 +3,15 @@ package comp4350.recipe_shop_app_version.Activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -16,6 +21,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,6 +37,8 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView ipInput, usernameInput, passwordInput, confirmInput, message, messageUsername;
     private Button loginButton, registerButton;
     private Activity activity;
+    private float yStart;
+    private int yDead = 50;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -55,6 +64,9 @@ public class RegisterActivity extends AppCompatActivity {
             String[] params = {"user-exists"};
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(new HTTPRequestTask(params,activity));
+        }
+        else{
+            messageUsername.setVisibility(View.GONE);
         }
 
         setListeners();
@@ -88,13 +100,148 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 Services.username = usernameInput.getText().toString();
-                userExistsAttempt();
-                String[] params = {"user-exists"};
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                executor.submit(new HTTPRequestTask(params,activity));
+                if(!usernameInput.getText().toString().isEmpty()) {
+                    userExistsAttempt();
+                    String[] params = {"user-exists"};
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    executor.submit(new HTTPRequestTask(params, activity));
+                }
+                else{
+                    messageUsername.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        ipInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(i == EditorInfo.IME_ACTION_NEXT || keyEvent != null){
+                    usernameInput.requestFocus();
+                }
+                return true;
+            }
+        });
+
+        usernameInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(i == EditorInfo.IME_ACTION_NEXT || keyEvent != null){
+                    passwordInput.requestFocus();
+                    Services.username = usernameInput.getText().toString();
+                    if(!usernameInput.getText().toString().isEmpty()) {
+                        userExistsAttempt();
+                        String[] params = {"user-exists"};
+                        ExecutorService executor = Executors.newSingleThreadExecutor();
+                        executor.submit(new HTTPRequestTask(params, activity));
+                    }
+                    else{
+                        messageUsername.setVisibility(View.GONE);
+                    }
+                }
+                return true;
+            }
+        });
+
+        passwordInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(i == EditorInfo.IME_ACTION_NEXT || keyEvent != null){
+                    confirmInput.requestFocus();
+                }
+                return true;
+            }
+        });
+
+        confirmInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                if(i == EditorInfo.IME_ACTION_GO || keyEvent != null){
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(textView.getWindowToken(), 0);
+                    if(confirmInput.hasFocus()){
+                        confirmInput.clearFocus();
+                    }
+                    register();
+                }
+                return true;
+            }
+        });
+
+        ipInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(ipInput.hasFocus() || usernameInput.hasFocus() || passwordInput.hasFocus() || confirmInput.hasFocus()){
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+                }
+            }
+        });
+
+        usernameInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(ipInput.hasFocus() || usernameInput.hasFocus() || passwordInput.hasFocus() || confirmInput.hasFocus()){
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+                }
+            }
+        });
+
+        passwordInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(ipInput.hasFocus() || usernameInput.hasFocus() || passwordInput.hasFocus() || confirmInput.hasFocus()){
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+                }
+            }
+        });
+
+        confirmInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(ipInput.hasFocus() || usernameInput.hasFocus() || passwordInput.hasFocus() || confirmInput.hasFocus()){
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+                }
             }
         });
     }//setListeners
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event){
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            yStart = event.getY();
+        }
+        else if(event.getAction() == MotionEvent.ACTION_UP){
+            //if tap
+            if(!(event.getY() < yStart - yDead || event.getY() > yStart + yDead)) {
+                View touchedView = getCurrentFocus();
+                if (touchedView instanceof TextInputEditText) {
+                    Rect viewBounds = new Rect();
+                    touchedView.getGlobalVisibleRect(viewBounds);
+                    if (!viewBounds.contains((int) event.getRawX(), (int) event.getRawY())) {
+                        touchedView.clearFocus();
+                        //hide keyboard
+                        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                        inputMethodManager.hideSoftInputFromWindow(touchedView.getWindowToken(), 0);
+                        Services.username = usernameInput.getText().toString();
+                        if(!usernameInput.getText().toString().isEmpty()) {
+                            userExistsAttempt();
+                            String[] params = {"user-exists"};
+                            ExecutorService executor = Executors.newSingleThreadExecutor();
+                            executor.submit(new HTTPRequestTask(params, activity));
+                        }
+                        else{
+                            messageUsername.setVisibility(View.GONE);
+                        }
+                    }//outside bounds
+                }//TextInputEditText
+            }//within dead zone
+        }//touch release
+
+        return super.dispatchTouchEvent(event);
+    }
 
     private void register(){
         Services.ip = ipInput.getText().toString();
@@ -102,7 +249,7 @@ public class RegisterActivity extends AppCompatActivity {
         Services.password = passwordInput.getText().toString();
         Services.confirm = confirmInput.getText().toString();
 
-        if(!Services.ip.isEmpty() && !Services.username.isEmpty() && !Services.password.isEmpty() && !Services.confirm.isEmpty()){
+        if(!Services.ip.isEmpty() && !Services.username.isEmpty() /*&& !Services.password.isEmpty() && !Services.confirm.isEmpty()*/){
             registerAttempt();
             String[] params = {"register"};
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -128,6 +275,8 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     public void registerSuccess(){
+        Services.password = "";
+        Services.confirm = "";
         message.setVisibility(View.VISIBLE);
         message.setText("Registration Successful!");
         message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.green));
@@ -153,7 +302,7 @@ public class RegisterActivity extends AppCompatActivity {
     }//userExists
 
     public void userExistsAttempt(){
-        messageUsername.setVisibility(View.GONE);
+        messageUsername.setVisibility(View.VISIBLE);
         messageUsername.setText("...");
         messageUsername.setTextColor(usernameInput.getCurrentTextColor());
     }//userExists

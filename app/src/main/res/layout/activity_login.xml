@@ -5,6 +5,7 @@
     android:id="@+id/login_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".Activity.LoginActivity"
     >
 
@@ -58,9 +59,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="32dp"
-                android:paddingTop="16dp"
+                android:paddingTop="8dp"
                 android:paddingRight="32dp"
-                android:paddingBottom="16dp"
+                android:paddingBottom="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/pageTitle">
@@ -74,6 +75,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:hint="input server ip address"
+                        android:imeOptions="actionNext"
                         android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
             </RelativeLayout>
@@ -83,9 +85,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="32dp"
-                android:paddingTop="16dp"
+                android:paddingTop="8dp"
                 android:paddingRight="32dp"
-                android:paddingBottom="16dp"
+                android:paddingBottom="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ipLayout">
@@ -99,6 +101,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:hint="input username"
+                        android:imeOptions="actionNext"
                         android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
             </RelativeLayout>
@@ -108,9 +111,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="32dp"
-                android:paddingTop="16dp"
+                android:paddingTop="8dp"
                 android:paddingRight="32dp"
-                android:paddingBottom="16dp"
+                android:paddingBottom="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/usernameLayout">
@@ -124,6 +127,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:hint="input password"
+                        android:imeOptions="actionGo"
                         android:inputType="text|textPassword" />
                 </com.google.android.material.textfield.TextInputLayout>
             </RelativeLayout>
@@ -133,9 +137,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="16dp"
-                android:paddingTop="16dp"
+                android:paddingTop="0dp"
                 android:paddingRight="16dp"
-                android:paddingBottom="16dp"
+                android:paddingBottom="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/passwordLayout">
@@ -144,10 +148,9 @@
                     android:id="@+id/messageText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
                     android:text=""
                     android:textAlignment="center"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:visibility="gone" />
             </RelativeLayout>
 
@@ -156,9 +159,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="32dp"
-                android:paddingTop="16dp"
+                android:paddingTop="8dp"
                 android:paddingRight="32dp"
-                android:paddingBottom="16dp"
+                android:paddingBottom="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/messageLayout">
@@ -177,9 +180,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="32dp"
-                android:paddingTop="16dp"
+                android:paddingTop="8dp"
                 android:paddingRight="32dp"
-                android:paddingBottom="16dp"
+                android:paddingBottom="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/loginButtonLayout">
