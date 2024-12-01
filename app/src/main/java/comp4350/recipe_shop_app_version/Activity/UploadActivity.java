@@ -4,15 +4,25 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.Html;
+import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -20,11 +30,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import comp4350.recipe_shop_app_version.Other.HTTPRequestTask;
+import comp4350.recipe_shop_app_version.Other.RecipeListArrayAdapter;
 import comp4350.recipe_shop_app_version.Other.Services;
 import comp4350.recipe_shop_app_version.R;
 
@@ -33,23 +45,25 @@ public class UploadActivity extends AppCompatActivity {
 
     private BottomNavigationView navBar;
     private ImageView recipeImage;
-    private TextView recipeName, recipeSource, ingredients, instructionLink;
-    private Button addFavorite, removeFavorite;
+    private TextView recipeName, recipeSource, uploader, instructions;
+    private Button addIngredient, uploadImage, uploadRecipe;
+    private LinearLayout ingredientList;
     private Activity activity;
     private JSONObject recipe;
     private Bitmap image;
     private String previousActivity;
+    private int ingredientID = 0;
+    private ArrayList<View> ingredientViews;
+    private ArrayList<String> ingredients;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_recipe_info);
+        setContentView(R.layout.activity_upload);
 
         activity = this;
-        recipe = Services.recipe;
-        image = Services.recipeImage;
 
         navBar = findViewById(R.id.bottomNavigationView);
         previousActivity = (String) this.getIntent().getExtras().get("CallingActivity");
@@ -71,43 +85,20 @@ public class UploadActivity extends AppCompatActivity {
         }
 
         recipeImage = findViewById(R.id.recipeImage);
-        recipeName = findViewById(R.id.recipeInfoTitle);
-        recipeSource = findViewById(R.id.recipeSource);
-        ingredients = findViewById(R.id.ingredients);
-        instructionLink = findViewById(R.id.instructionLink);
-        addFavorite = findViewById(R.id.favoriteButton);
-        removeFavorite = findViewById(R.id.unfavoriteButton);
+        recipeName = findViewById(R.id.title_input);
+        recipeSource = findViewById(R.id.source_input);
+        uploader = findViewById(R.id.username);
+        ingredientList = findViewById(R.id.ingredientItemLayout);
+        instructions = findViewById(R.id.instruction_input);
+        addIngredient = findViewById(R.id.addIngredientButton);
+        uploadImage = findViewById(R.id.uploadImageButton);
+        uploadRecipe = findViewById(R.id.uploadButton);
 
-        String name = "";
-        String source = "";
-        ArrayList<String> ingredientList = new ArrayList<>();
-        String link = "";
-        try {
-            name = recipe.getJSONObject("recipe").get("label").toString();
-            source = recipe.getJSONObject("recipe").get("source").toString();
-            JSONArray ingredientLines = (JSONArray) recipe.getJSONObject("recipe").get("ingredientLines");
-            for(int i=0;i<ingredientLines.length();i++){
-                ingredientList.add("\u2022" + ingredientLines.get(i).toString() + "\n");
-            }
-            link = recipe.getJSONObject("recipe").get("url").toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        recipeImage.setImageBitmap(image);
-        recipeName.setText(name);
-        recipeSource.setText("Recipe from " + source);
-        String ingredientText = "";
-        for(int i=0;i<ingredientList.size();i++){
-            ingredientText += ingredientList.get(i);
-            ingredientText += "\n";
-        }
-        ingredients.setText(ingredientText);
-        String linkText = (String) instructionLink.getText();
-        instructionLink.setText(Html.fromHtml("<a href=\"" + link + "\">" + linkText + "</a>"));
-        instructionLink.setMovementMethod(LinkMovementMethod.getInstance());
-
-        checkFavorite();
+        uploader.setText(R.string.uploader + Services.username);
+        ingredients = new ArrayList<>();
+        ingredientViews = new ArrayList<>();
+        addIngredientLine();
+        image = null;
 
         setListeners();
     }//onCreate
@@ -158,68 +149,125 @@ public class UploadActivity extends AppCompatActivity {
             return success;
         });
 
-        addFavorite.setOnClickListener(view -> {
-            addToFavorites();
+        addIngredient.setOnClickListener(view -> {
+            addIngredientLine();
         });
 
-        removeFavorite.setOnClickListener(view -> {
-            removeFromFavorites();
+        uploadImage.setOnClickListener(view -> {
+            uploadRecipeImage();
+        });
+
+        uploadRecipe.setOnClickListener(view -> {
+            uploadRecipe();
         });
     }//setListeners
 
-    private void addToFavorites(){
-        try {
-            int indexID = recipe.getJSONObject("recipe").get("uri").toString().indexOf("_") + 1;
-            String recipeID = recipe.getJSONObject("recipe").get("uri").toString().substring(indexID);
-            String name = recipe.getJSONObject("recipe").get("label").toString();
-            String[] params = {"addFavorite", recipeID, name};
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.submit(new HTTPRequestTask(params, activity));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }//addToFavorites
+    ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    System.out.println("PhotoPicker\t Selected URI: " + uri);
+                    try {
+                        image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                        recipeImage.setImageBitmap(image);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.out.println("PhotoPicker\t No media selected");
+                }
+            });
 
-    private void removeFromFavorites(){
-        try {
-            int indexID = recipe.getJSONObject("recipe").get("uri").toString().indexOf("_") + 1;
-            String recipeID = recipe.getJSONObject("recipe").get("uri").toString().substring(indexID);
-            String name = recipe.getJSONObject("recipe").get("label").toString();
-            String[] params = {"deleteFavorite", recipeID, name};
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.submit(new HTTPRequestTask(params, activity));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }//removeFromFavorites
+    private void uploadRecipe() {
+        Services.recipeImage = image;
+        //send http request task
+    }//uploadRecipe
 
-    public void checkFavorite(){
-        try {
-            int indexID = recipe.getJSONObject("recipe").get("uri").toString().indexOf("_") + 1;
-            String recipeID = recipe.getJSONObject("recipe").get("uri").toString().substring(indexID);
-            String[] params = {"is-favorite", recipeID};
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.submit(new HTTPRequestTask(params, activity));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }//checkFavorite
+    private void uploadRecipeImage() {
+        pickMedia.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
+    }//uploadRecipeImage
 
-    public void updateFavoriteButtons(Boolean favorited){
-        runOnUiThread(new Runnable() {
+    private void addIngredientLine() {
+        View ingredientItem = LayoutInflater.from(this).inflate(R.layout.ingredient_item_layout,ingredientList, false);
+
+        int index = ingredientID;
+        TextView require = ingredientItem.findViewById(R.id.ingredientRequired);
+
+        TextView input = ingredientItem.findViewById(R.id.ingredient_input);
+        input.addTextChangedListener(new TextWatcher() {
             @Override
-            public void run() {
-                if(favorited){
-                    addFavorite.setVisibility(View.GONE);
-                    removeFavorite.setVisibility(View.VISIBLE);
-                }
-                else{
-                    addFavorite.setVisibility(View.VISIBLE);
-                    removeFavorite.setVisibility(View.GONE);
-                }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                ingredients.set(index, input.getText().toString());
             }
         });
-    }//updateFavoriteButtons
+
+        Button button = ingredientItem.findViewById(R.id.removeButton);
+        button.setOnClickListener(view -> {
+            removeIngredientLine(index);
+        });
+
+        ingredientViews.add(ingredientItem);
+        ingredientList.addView(ingredientItem);
+        ingredientID += 1;
+        updateIngredientRequire();
+    }//addIngredientLines
+
+    private void updateIngredientRequire() {
+        int count = 0;
+        for(int i=0; i<ingredientViews.size(); i++){
+            if(ingredientViews.get(i) != null){
+                count += 1;
+            }
+        }
+        boolean found = false;
+        for(int i=0; i<ingredientViews.size(); i++){
+            if(ingredientViews.get(i) != null){
+                if(count > 1){
+                    ingredientViews.get(i).findViewById(R.id.removeButton).setVisibility(View.VISIBLE);
+                }
+                else{
+                    ingredientViews.get(i).findViewById(R.id.removeButton).setVisibility(View.INVISIBLE);
+                }
+                if(!found){
+                    ingredientViews.get(i).findViewById(R.id.ingredientRequired).setVisibility(View.VISIBLE);
+                    found = true;
+                }
+                else{
+                    ingredientViews.get(i).findViewById(R.id.ingredientRequired).setVisibility(View.INVISIBLE);
+                }
+            }
+        }
+    }//updateIngredientRequire
+
+    private void removeIngredientLine(int index) {
+        int count = 0;
+        for(int i=0; i<ingredientViews.size(); i++){
+            if(ingredientViews.get(i) != null){
+                count += 1;
+            }
+        }
+        if(count >= 2) {
+            ingredientList.removeView(ingredientViews.get(index));
+            ingredientViews.set(index, null);
+            ingredients.set(index, "");
+            updateIngredientRequire();
+        }
+    }//removeIngredientLines
+
+    public void uploadSuccess() {
+    }//uploadSuccess
+
+    public void uploadEmpty() {
+    }//uploadEmpty
+
+    public void uploadFail() {
+    }//uploadFail
+
 
     private void goToSearch(){
         Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);

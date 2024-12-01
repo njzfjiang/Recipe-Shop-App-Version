@@ -24,6 +24,7 @@ import comp4350.recipe_shop_app_version.Activity.RecipeInfoActivity;
 import comp4350.recipe_shop_app_version.Activity.RegisterActivity;
 import comp4350.recipe_shop_app_version.Activity.SearchActivity;
 import comp4350.recipe_shop_app_version.Activity.SettingsActivity;
+import comp4350.recipe_shop_app_version.Activity.UploadActivity;
 
 public class HTTPRequestTask implements Runnable{
     ArrayList<String> params = new ArrayList<>();
@@ -72,6 +73,9 @@ public class HTTPRequestTask implements Runnable{
         }
         else if(params.get(0).equals("upload")) {
             upload(urlString);
+        }
+        else if(params.get(0).equals("all-uploads")) {
+            getUploads(urlString);
         }
     }//run
 
@@ -385,20 +389,49 @@ public class HTTPRequestTask implements Runnable{
 
         if(response[0].equals("201")){
             System.out.println("uploadSuccess");
-            ((SettingsActivity) activity).uploadSuccess();
+            ((UploadActivity) activity).uploadSuccess();
         }
         else if(response[0].equals("409")){
             System.out.println("empty upload parameter");
-            ((SettingsActivity) activity).uploadFail();
+            ((UploadActivity) activity).uploadEmpty();
         }
         else if(response[0].equals("404")){
             System.out.println("username doesn't exist");
-            ((SettingsActivity) activity).uploadFail();
+            ((UploadActivity) activity).uploadFail();
         }
         //error / other
         else{
             System.out.println("ERROR!");
-            ((SettingsActivity)activity).uploadFail();
+            ((UploadActivity)activity).uploadFail();
+        }
+    }//upload
+
+    private void getUploads(String urlString){
+        urlString += "/api/recipe/upload";
+        String[] reqParams = {"POST", "{\n\"title\":\"",params.get(1), "\"," +
+                "\n\"source\":\"",params.get(2), "\"," +
+                "\n\"username\":\"",Services.username,"\"," +
+                "\n\"ingredients\": [\n",params.get(3),"\n]," +
+                "\n\"instructions\":\"",params.get(4),"\"," +
+                "\n\"image\":\"", Services.recipeImage.toString(),"\"," +
+                "\n\"public\":\"",params.get(5),"\"," +
+                "\n}"};
+
+
+        String[] response = request(urlString, reqParams);
+
+        if(response[0].equals("200")){
+            System.out.println("getUploadSuccess");
+            ((SettingsActivity) activity).getUploadsSuccess();
+        }
+        else if(response[0].equals("404")){
+            System.out.println("No uploaded recipes found");
+            ((SettingsActivity) activity).getUploadsEmpty();
+        }
+        //error / other
+        else{
+            System.out.println("ERROR!");
+            ((SettingsActivity)activity).getUploadsFail();
         }
     }//upload
 

@@ -142,16 +142,6 @@
                     android:layout_centerVertical="true"
                     android:text="@string/uploader"
                     android:textSize="24sp" />
-
-                <TextView
-                    android:id="@+id/username_input"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/username"
-                    android:textSize="24sp"
-                    tools:text="username" />
-
             </RelativeLayout>
 
             <RelativeLayout
@@ -279,7 +269,7 @@
                 app:layout_constraintTop_toBottomOf="@id/recipeImageLayout">
 
                 <Button
-                    android:id="@+id/addImageButton"
+                    android:id="@+id/uploadImageButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"

@@ -3,8 +3,10 @@ package comp4350.recipe_shop_app_version.Activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,6 +20,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import comp4350.recipe_shop_app_version.Other.HTTPRequestTask;
 import comp4350.recipe_shop_app_version.Other.Services;
 import comp4350.recipe_shop_app_version.R;
 
@@ -30,6 +39,10 @@ public class SettingsActivity extends AppCompatActivity {
     private String keywords = "";
     private ListView uploadList;
     private Activity activity;
+    private ArrayList<JSONObject> recipes;
+    private ArrayList<Bitmap> images;
+    private ArrayList<ArrayList> listList;
+    private ArrayAdapter<JSONObject> listArrayAdapter;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -59,6 +72,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         navBar.getMenu().findItem(R.id.settings).setChecked(true);
+        getUploads();
     }//onResume
 
     public void setListeners(){
@@ -98,22 +112,39 @@ public class SettingsActivity extends AppCompatActivity {
         this.finish();
     }
 
+
+    private void getUploads(){
+        recipes = new ArrayList<>();
+        images = new ArrayList<>();
+        listList = new ArrayList<>();
+        uploadList.setVisibility(View.GONE);
+        getUploadsAttempt();
+        String[] params = {"all-uploads"};
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(new HTTPRequestTask(params,activity));
+    }//getFavorites
+
     //----------------------------------------------------------------------------------------------
-    private void uploadAttempt(){
+    private void getUploadsAttempt(){
         message.setVisibility(View.VISIBLE);
         message.setText("...");
         message.setTextColor(usernameInput.getCurrentTextColor());
     }//uploadSuccess
 
-    public void uploadSuccess(){
-        message.setVisibility(View.VISIBLE);
+    public void getUploadsSuccess(){
+        message.setVisibility(View.GONE);
         message.setText("No results.");
-        message.setTextColor(usernameInput.getCurrentTextColor());
     }//uploadSuccess
 
-    public void uploadFail(){
+    public void getUploadsEmpty(){
         message.setVisibility(View.VISIBLE);
-        message.setText("Upload Failed!");
+        message.setText("No uploaded recipes!");
+        message.setTextColor(usernameInput.getCurrentTextColor());
+    }//uploadFail
+
+    public void getUploadsFail(){
+        message.setVisibility(View.VISIBLE);
+        message.setText("Failed to retrieve uploaded recipes!");
         message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red));
     }//uploadFail
     //----------------------------------------------------------------------------------------------
