@@ -4,11 +4,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -22,8 +25,10 @@ import comp4350.recipe_shop_app_version.R;
 public class SettingsActivity extends AppCompatActivity {
 
     private BottomNavigationView navBar;
-    private TextView ipInput, usernameInput;
+    private TextView ipInput, usernameInput, keywordsInput, message;
     private Button logoutButton;
+    private String keywords = "";
+    private ListView uploadList;
     private Activity activity;
 
     @SuppressLint("MissingInflatedId")
@@ -40,9 +45,12 @@ public class SettingsActivity extends AppCompatActivity {
         ipInput = findViewById(R.id.ip_input);
         usernameInput = findViewById(R.id.username_input);
         logoutButton = findViewById(R.id.logoutButton);
+        keywordsInput = findViewById(R.id.keyword_input);
+        message = findViewById(R.id.messageText);
+        uploadList = findViewById(R.id.listView);
 
-        ipInput.setText(Services.ip);
-        usernameInput.setText(Services.username);
+        ipInput.setText(R.string.ip_label + Services.ip);
+        usernameInput.setText(R.string.username_label + Services.username);
 
         setListeners();
     }//onCreate
@@ -89,6 +97,26 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(finishIntent);
         this.finish();
     }
+
+    //----------------------------------------------------------------------------------------------
+    private void uploadAttempt(){
+        message.setVisibility(View.VISIBLE);
+        message.setText("...");
+        message.setTextColor(usernameInput.getCurrentTextColor());
+    }//uploadSuccess
+
+    public void uploadSuccess(){
+        message.setVisibility(View.VISIBLE);
+        message.setText("No results.");
+        message.setTextColor(usernameInput.getCurrentTextColor());
+    }//uploadSuccess
+
+    public void uploadFail(){
+        message.setVisibility(View.VISIBLE);
+        message.setText("Upload Failed!");
+        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red));
+    }//uploadFail
+    //----------------------------------------------------------------------------------------------
 
     private void goToSearch(){
         Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);

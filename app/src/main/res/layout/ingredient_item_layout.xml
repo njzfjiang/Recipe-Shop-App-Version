@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="1dp"
+    android:paddingBottom="1dp"
+    android:paddingHorizontal="1dp"
+    android:background="?colorAccent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:paddingHorizontal="15dp"
+        android:background="?colorSurfaceContainer">
+
+        <TextView
+            android:id="@+id/ingredientRequired"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="*"
+            android:textSize="34sp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/ingredientRequired"
+            android:layout_toStartOf="@id/removeButton"
+            android:id="@+id/ingredient_text">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/ingredient_input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Ingredient"
+                android:imeOptions="actionNext"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/removeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/red"
+            android:minHeight="60dp"
+            android:minWidth="60dp"
+            android:padding="8dp"
+            android:text="X"
+            android:textColor="?colorSurfaceContainer"
+            android:textSize="20sp"
+            app:strokeColor="?colorAccent"
+            app:strokeWidth="1dp" />
+    </RelativeLayout>
+</RelativeLayout>

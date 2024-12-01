@@ -11,7 +11,7 @@
     <string name="password_label">"Password: "</string>
     <string name="register_prompt">Not a member?</string>
     <string name="register_label">Register</string>
-    <string name="confirm_label">Confirm Password:</string>
+    <string name="confirm_label">"Confirm Password: "</string>
     <string name="login_prompt">Already a member?</string>
     <string name="meal_type_label">"Meal Type: "</string>
     <string name="cooking_time">"Cooking Time: "</string>
@@ -40,4 +40,10 @@
     <string name="remove_from_favorites">Remove from Favorites</string>
     <string name="add_to_favorites">Add to Favorites</string>
     <string name="our_mission">Our Mission</string>
+    <string name="upload_recipe">Upload Recipe</string>
+    <string name="add_ingredient">Add Ingredient</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="uploader">"Uploader: "</string>
+    <string name="your_recipes">Your Recipes</string>
+    <string name="upload_new_recipe">Upload New Recipe</string>
 </resources>

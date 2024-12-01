@@ -2,6 +2,7 @@ package comp4350.recipe_shop_app_version.Other;
 
 import android.app.Activity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,6 +23,7 @@ import comp4350.recipe_shop_app_version.Activity.LoginActivity;
 import comp4350.recipe_shop_app_version.Activity.RecipeInfoActivity;
 import comp4350.recipe_shop_app_version.Activity.RegisterActivity;
 import comp4350.recipe_shop_app_version.Activity.SearchActivity;
+import comp4350.recipe_shop_app_version.Activity.SettingsActivity;
 
 public class HTTPRequestTask implements Runnable{
     ArrayList<String> params = new ArrayList<>();
@@ -67,6 +69,9 @@ public class HTTPRequestTask implements Runnable{
         }
         else if(params.get(0).equals("generate-list")) {
             getList(urlString);
+        }
+        else if(params.get(0).equals("upload")) {
+            upload(urlString);
         }
     }//run
 
@@ -361,7 +366,41 @@ public class HTTPRequestTask implements Runnable{
             System.out.println("ERROR!");
             ((GroceryActivity) activity).getListFail();
         }
-    }//search
+    }//getList
+
+
+    private void upload(String urlString){
+        urlString += "/api/recipe/upload";
+        String[] reqParams = {"POST", "{\n\"title\":\"",params.get(1), "\"," +
+                "\n\"source\":\"",params.get(2), "\"," +
+                "\n\"username\":\"",Services.username,"\"," +
+                "\n\"ingredients\": [\n",params.get(3),"\n]," +
+                "\n\"instructions\":\"",params.get(4),"\"," +
+                "\n\"image\":\"", Services.recipeImage.toString(),"\"," +
+                "\n\"public\":\"",params.get(5),"\"," +
+                "\n}"};
+
+
+        String[] response = request(urlString, reqParams);
+
+        if(response[0].equals("201")){
+            System.out.println("uploadSuccess");
+            ((SettingsActivity) activity).uploadSuccess();
+        }
+        else if(response[0].equals("409")){
+            System.out.println("empty upload parameter");
+            ((SettingsActivity) activity).uploadFail();
+        }
+        else if(response[0].equals("404")){
+            System.out.println("username doesn't exist");
+            ((SettingsActivity) activity).uploadFail();
+        }
+        //error / other
+        else{
+            System.out.println("ERROR!");
+            ((SettingsActivity)activity).uploadFail();
+        }
+    }//upload
 
 
     private String[] request(String urlString, String[] reqParams){

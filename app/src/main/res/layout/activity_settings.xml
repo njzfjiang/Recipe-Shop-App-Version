@@ -39,7 +39,7 @@
             android:paddingLeft="32dp"
             android:paddingTop="64dp"
             android:paddingRight="32dp"
-            android:paddingBottom="32dp"
+            android:paddingBottom="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/pageTitle">
@@ -54,63 +54,42 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/ipLayout"
+            android:id="@+id/userLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:paddingLeft="32dp"
+            android:paddingTop="0dp"
             android:paddingRight="32dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
+            android:paddingBottom="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pageTitle">
 
             <TextView
                 android:id="@+id/ip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="@string/ip_label"
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/ip_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="ip address"
-                android:textSize="24sp"
-                android:layout_toEndOf="@id/ip"/>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/usernameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="32dp"
-            android:paddingRight="32dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ipLayout">
+                android:paddingLeft="32dp"
+                android:paddingTop="8dp"
+                android:paddingRight="32dp"
+                android:paddingBottom="16dp"
+                android:text="@string/ip_label"
+                android:textAlignment="center"
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="@string/username_label"
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/username_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="username"
-                android:textSize="24sp"
-                android:layout_toEndOf="@id/username"/>
+                android:layout_below="@id/ip"
+                android:paddingLeft="32dp"
+                android:paddingTop="8dp"
+                android:paddingRight="32dp"
+                android:paddingBottom="16dp"
+                android:text="@string/username_label"
+                android:textAlignment="center"
+                android:textSize="24sp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -123,7 +102,7 @@
             android:paddingBottom="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/usernameLayout">
+            app:layout_constraintTop_toBottomOf="@id/userLayout">
 
             <Button
                 android:id="@+id/logoutButton"
@@ -131,6 +110,116 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:text="@string/logout_label"
+                android:textSize="28sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/uploadTitleLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32dp"
+            android:paddingTop="16dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/logoutButtonLayout">
+
+            <TextView
+                android:id="@+id/uploadTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/your_recipes"
+                android:textAlignment="center"
+                android:textSize="28sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/keywordLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32dp"
+            android:paddingTop="16dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/uploadTitleLayout">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/keyword_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/keyword_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Keywords"
+                    android:imeOptions="actionDone"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/messageLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/keywordLayout">
+
+            <TextView
+                android:id="@+id/messageText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text=""
+                android:textAlignment="center"
+                android:textSize="24sp"
+                android:visibility="gone" />
+
+            <ListView
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:choiceMode="singleChoice"
+                android:dividerHeight="-1px"
+                android:divider="@null"
+                android:isScrollContainer="false"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/messageText"
+                tools:listitem="@layout/recipe_list_layout" />
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:id="@+id/uploadButtonLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="32dp"
+            android:paddingTop="16dp"
+            android:paddingRight="32dp"
+            android:paddingBottom="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/messageLayout">
+
+            <Button
+                android:id="@+id/uploadButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/upload_new_recipe"
                 android:textSize="28sp" />
         </RelativeLayout>
 
