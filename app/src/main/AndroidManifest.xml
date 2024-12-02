@@ -55,6 +55,11 @@
         </activity>
         <activity
             android:windowSoftInputMode="adjustResize"
+            android:name=".Activity.UploadActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:windowSoftInputMode="adjustResize"
             android:name=".Activity.RegisterActivity"
             android:exported="true">
         </activity>

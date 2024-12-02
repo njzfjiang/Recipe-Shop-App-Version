@@ -13,10 +13,13 @@ import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -24,10 +27,12 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -45,9 +50,11 @@ public class UploadActivity extends AppCompatActivity {
 
     private BottomNavigationView navBar;
     private ImageView recipeImage;
-    private TextView recipeName, recipeSource, uploader, instructions;
+    private TextView recipeName, recipeSource, uploader, recipeInstructions, message;
     private Button addIngredient, uploadImage, uploadRecipe;
     private LinearLayout ingredientList;
+    private Spinner privacySpinner;
+    private String privacy;
     private Activity activity;
     private JSONObject recipe;
     private Bitmap image;
@@ -89,18 +96,28 @@ public class UploadActivity extends AppCompatActivity {
         recipeSource = findViewById(R.id.source_input);
         uploader = findViewById(R.id.username);
         ingredientList = findViewById(R.id.ingredientItemLayout);
-        instructions = findViewById(R.id.instruction_input);
+        recipeInstructions = findViewById(R.id.instruction_input);
         addIngredient = findViewById(R.id.addIngredientButton);
         uploadImage = findViewById(R.id.uploadImageButton);
+        privacySpinner = findViewById(R.id.privacy_spinner);
+        message = findViewById(R.id.messageText);
         uploadRecipe = findViewById(R.id.uploadButton);
 
-        uploader.setText(R.string.uploader + Services.username);
+        String uploadBy = getResources().getString(R.string.uploader) + Services.username;
+        uploader.setText(uploadBy);
         ingredients = new ArrayList<>();
         ingredientViews = new ArrayList<>();
         addIngredientLine();
         image = null;
 
+        ArrayList<String> privacyOptions = new ArrayList<>();
+        privacyOptions.add("public");
+        privacyOptions.add("private");
+        ArrayAdapter spinnerViewAdapter = new ArrayAdapter<>(this, R.layout.spinner_item_layout, R.id.listText, privacyOptions);
+        privacySpinner.setAdapter(spinnerViewAdapter);
+
         setListeners();
+        privacySpinner.setSelection(0);
     }//onCreate
 
     @Override
@@ -149,6 +166,20 @@ public class UploadActivity extends AppCompatActivity {
             return success;
         });
 
+        privacySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                int spinnerPosition = adapterView.getPositionForView(view);
+                if (spinnerPosition == 0) {
+                    privacy = "public";
+                } else if (spinnerPosition == 1) {
+                    privacy = "private";
+                }
+            }//onItemSelected
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+
         addIngredient.setOnClickListener(view -> {
             addIngredientLine();
         });
@@ -178,8 +209,33 @@ public class UploadActivity extends AppCompatActivity {
             });
 
     private void uploadRecipe() {
+        int count = 0;
+        for(int i=0; i<ingredientViews.size(); i++){
+            if(ingredientViews.get(i) != null){
+                count += 1;
+            }
+        }
         Services.recipeImage = image;
-        //send http request task
+        String ingredientString = "";
+        int added = 0;
+        for(int i=0; i<ingredientViews.size(); i++){
+            if(ingredientViews.get(i) != null) {
+                TextView tv = ingredientViews.get(i).findViewById(R.id.ingredient_input);
+                added += 1;
+                if(tv.getText().length() > 0) {
+                    ingredientString += "\"" + tv.getText() + "\"";
+                    if(added < count){
+                        ingredientString += ",";
+                    }
+                    ingredientString += "\n";
+                }
+            }
+        }
+        String[] params = {"upload", (String) recipeName.getText(), (String) recipeSource.getText(),
+                ingredientString, (String) recipeInstructions.getText(), privacy};
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(new HTTPRequestTask(params,activity));
+        uploadAttempt();
     }//uploadRecipe
 
     private void uploadRecipeImage() {
@@ -213,6 +269,7 @@ public class UploadActivity extends AppCompatActivity {
 
         ingredientViews.add(ingredientItem);
         ingredientList.addView(ingredientItem);
+        ingredients.add("");
         ingredientID += 1;
         updateIngredientRequire();
     }//addIngredientLines
@@ -259,13 +316,39 @@ public class UploadActivity extends AppCompatActivity {
         }
     }//removeIngredientLines
 
+    private void uploadAttempt(){
+        message.setVisibility(View.VISIBLE);
+        message.setText("...");
+        message.setTextColor(uploader.getCurrentTextColor());
+    }//uploadAttempt
+
     public void uploadSuccess() {
+        message.setVisibility(View.VISIBLE);
+        message.setText("Upload Successful!");
+        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.green));
+        this.finish();
     }//uploadSuccess
 
-    public void uploadEmpty() {
+    public void uploadEmpty(String data) {
+        message.setVisibility(View.VISIBLE);
+        try {
+            message.setText(new JSONObject(data).get("error").toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            message.setText("Failed to upload!\nInvalid uploader username");
+        }
+        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red));
     }//uploadEmpty
 
-    public void uploadFail() {
+    public void uploadFail(String data) {
+        message.setVisibility(View.VISIBLE);
+        try {
+            message.setText(new JSONObject(data).get("error").toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            message.setText("Failed to upload!\nCheck all required fields are filled out");
+        }
+        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red));
     }//uploadFail
 
 

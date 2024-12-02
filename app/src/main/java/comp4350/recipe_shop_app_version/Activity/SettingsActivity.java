@@ -14,12 +14,10 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -35,7 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private BottomNavigationView navBar;
     private TextView ipInput, usernameInput, keywordsInput, message;
-    private Button logoutButton;
+    private Button logoutButton, uploadButton;
     private String keywords = "";
     private ListView uploadList;
     private Activity activity;
@@ -55,15 +53,18 @@ public class SettingsActivity extends AppCompatActivity {
 
         navBar = findViewById(R.id.bottomNavigationView);
         navBar.setSelectedItemId(R.id.settings);
-        ipInput = findViewById(R.id.ip_input);
-        usernameInput = findViewById(R.id.username_input);
+        ipInput = findViewById(R.id.ip);
+        usernameInput = findViewById(R.id.username);
         logoutButton = findViewById(R.id.logoutButton);
         keywordsInput = findViewById(R.id.keyword_input);
         message = findViewById(R.id.messageText);
         uploadList = findViewById(R.id.listView);
+        uploadButton = findViewById(R.id.uploadButton);
 
-        ipInput.setText(R.string.ip_label + Services.ip);
-        usernameInput.setText(R.string.username_label + Services.username);
+        String ip = getResources().getString(R.string.ip_label) + Services.ip;
+        ipInput.setText(ip);
+        String username = getResources().getString(R.string.username_label) + Services.username;
+        usernameInput.setText(username);
 
         setListeners();
     }//onCreate
@@ -100,6 +101,10 @@ public class SettingsActivity extends AppCompatActivity {
             }
             return success;
         });
+
+        uploadButton.setOnClickListener(view -> {
+            goToUpload();
+        });
     }//setListeners
 
     private void logout(){
@@ -131,24 +136,41 @@ public class SettingsActivity extends AppCompatActivity {
         message.setTextColor(usernameInput.getCurrentTextColor());
     }//uploadSuccess
 
-    public void getUploadsSuccess(){
+    public void getUploadsSuccess(String data){
         message.setVisibility(View.GONE);
-        message.setText("No results.");
+        //populate list with recipes
+
     }//uploadSuccess
 
-    public void getUploadsEmpty(){
+    public void getUploadsEmpty(String data){
         message.setVisibility(View.VISIBLE);
-        message.setText("No uploaded recipes!");
-        message.setTextColor(usernameInput.getCurrentTextColor());
+        try {
+            message.setText(new JSONObject(data).get("error").toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            message.setText("No uploaded recipes found!");
+        }
+        message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red));
     }//uploadFail
 
-    public void getUploadsFail(){
+    public void getUploadsFail(String data){
         message.setVisibility(View.VISIBLE);
-        message.setText("Failed to retrieve uploaded recipes!");
+        try {
+            message.setText(new JSONObject(data).get("error").toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            message.setText("Failed to retrieve uploaded recipes!");
+        }
         message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red));
     }//uploadFail
     //----------------------------------------------------------------------------------------------
 
+    private void goToUpload(){
+        Intent finishIntent = new Intent(getApplicationContext(), UploadActivity.class);
+        finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
+        startActivity(finishIntent);
+    }//goToSearch
     private void goToSearch(){
         Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
