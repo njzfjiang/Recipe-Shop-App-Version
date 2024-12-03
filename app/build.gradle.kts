@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId = "comp4350.recipe_shop_app_version"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"

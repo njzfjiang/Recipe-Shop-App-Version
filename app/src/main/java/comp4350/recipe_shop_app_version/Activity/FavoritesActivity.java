@@ -285,7 +285,7 @@ public class FavoritesActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }//getRecipe
+    }//getRecipeSuccess
 
     public void loadImage(int pos, Bitmap image){
         runOnUiThread(new Runnable() {
@@ -352,7 +352,7 @@ public class FavoritesActivity extends AppCompatActivity {
         finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
         startActivity(finishIntent);
-    }//goToSearch
+    }//goToRecipe
 
     private void goToSearch(){
         Intent finishIntent = new Intent(getApplicationContext(), SearchActivity.class);

@@ -1,12 +1,14 @@
 package comp4350.recipe_shop_app_version.Other;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
@@ -15,6 +17,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Scanner;
 
 import comp4350.recipe_shop_app_version.Activity.FavoritesActivity;
@@ -76,6 +79,9 @@ public class HTTPRequestTask implements Runnable{
         }
         else if(params.get(0).equals("all-uploads")) {
             getUploads(urlString);
+        }
+        else if(params.get(0).equals("shop-recipe")) {
+            getShopRecipe(urlString);
         }
     }//run
 
@@ -346,7 +352,7 @@ public class HTTPRequestTask implements Runnable{
                 ((GroceryActivity) activity).getRecipeFail(Integer.parseInt(params.get(1)));
             }
         }
-    }//search
+    }//getRecipe
 
     private void getList(String urlString){
         urlString += "/api/generate-list/";
@@ -374,16 +380,21 @@ public class HTTPRequestTask implements Runnable{
 
 
     private void upload(String urlString){
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        Services.recipeImage.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] imageBase64 = byteArrayOutputStream.toByteArray();
+
         urlString += "/api/recipe/upload";
-        String[] reqParams = {"POST", "{\n\"title\":\"",params.get(1), "\"," +
-                "\n\"source\":\"",params.get(2), "\"," +
-                "\n\"username\":\"",Services.username,"\"," +
-                "\n\"ingredients\": [\n",params.get(3),"\n]," +
-                "\n\"instructions\":\"",params.get(4),"\"," +
-                "\n\"image\":\"", Services.recipeImage.toString(),"\"," +
-                "\n\"privacy\":\"",params.get(5),"\"," +
+        String[] reqParams = {"POST", "{\n\t\"title\":\"",params.get(1), "\"," +
+                "\n\t\"source\":\"",params.get(2), "\"," +
+                "\n\t\"username\":\"",Services.username,"\"," +
+                "\n\t\"ingredients\": [\n",params.get(3),"\n\t]," +
+                "\n\t\"instructions\":\"",params.get(4),"\"," +
+                "\n\t\"image\":\"", Base64.getEncoder().encodeToString(imageBase64),"\"," +
+                "\n\t\"privacy\":\"",params.get(5),"\"" +
                 "\n}"};
 
+        //System.out.println(Arrays.toString(reqParams));
         String[] response = request(urlString, reqParams);
 
         if(response[0].equals("201")){
@@ -406,14 +417,16 @@ public class HTTPRequestTask implements Runnable{
     }//upload
 
     private void getUploads(String urlString){
-        urlString += "/api/recipe/upload";
+        urlString += "/api/all-uploads/";
+        urlString += Services.username;
         String[] reqParams = {"GET"};
 
         String[] response = request(urlString, reqParams);
 
         if(response[0].equals("200")){
-            System.out.println("getUploadSuccess");
+            System.out.println("getUploadsSuccess 1");
             ((SettingsActivity) activity).getUploadsSuccess(response[1]);
+            System.out.println("gotUploadsSuccess 2");
         }
         else if(response[0].equals("404")){
             System.out.println("No uploaded recipes found");
@@ -427,6 +440,31 @@ public class HTTPRequestTask implements Runnable{
     }//upload
 
 
+    private void getShopRecipe(String urlString){
+        urlString += "/api/recipe/upload/";
+        urlString += params.get(2);
+        System.out.println(urlString);
+
+        String[] reqParams = {"GET"};
+
+        String[] response = request(urlString, reqParams);
+
+        if(response[0].equals("200")){
+            System.out.println("getShopRecipeSuccess");
+            if(activity instanceof SettingsActivity) {
+                ((SettingsActivity) activity).getShopRecipeSuccess(Integer.parseInt(params.get(1)), response[1]);
+            }
+        }
+        //error / other
+        else {
+            System.out.println("ERROR!");
+            if(activity instanceof SettingsActivity) {
+                ((SettingsActivity) activity).getShopRecipeFail(Integer.parseInt(params.get(1)));
+            }
+        }
+    }//getShopRecipe
+
+
     private String[] request(String urlString, String[] reqParams){
         String code = "";
         String response = "";
@@ -437,7 +475,8 @@ public class HTTPRequestTask implements Runnable{
         for (int i=1;i<reqParams.length;i++) {
             body += reqParams[i];
         }
-        //System.out.println(body);
+
+        System.out.println(body);
 
         try {
             URL url = new URL(urlString);

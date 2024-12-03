@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -17,6 +20,7 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,6 +29,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import comp4350.recipe_shop_app_version.Other.HTTPRequestTask;
+import comp4350.recipe_shop_app_version.Other.ImageRequestTask;
+import comp4350.recipe_shop_app_version.Other.RecipeListArrayAdapter;
 import comp4350.recipe_shop_app_version.Other.Services;
 import comp4350.recipe_shop_app_version.R;
 
@@ -41,6 +47,7 @@ public class SettingsActivity extends AppCompatActivity {
     private ArrayList<Bitmap> images;
     private ArrayList<ArrayList> listList;
     private ArrayAdapter<JSONObject> listArrayAdapter;
+    private ArrayList<Boolean> visible;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -136,11 +143,109 @@ public class SettingsActivity extends AppCompatActivity {
         message.setTextColor(usernameInput.getCurrentTextColor());
     }//uploadSuccess
 
-    public void getUploadsSuccess(String data){
+    public void getUploadsSuccess(String response){
         message.setVisibility(View.GONE);
-        //populate list with recipes
+        System.out.println("In getUploadsSuccess");
+        try{
+            JSONArray recipeArray = new JSONObject(response).getJSONArray("recipes");
+            System.out.println(recipeArray.length());
+            for(int i=0;i<recipeArray.length();i++){
+                recipes.add(null);
+                images.add(null);
+                getShopRecipe(i, recipeArray.getJSONObject(i).get("_id").toString());
+                System.out.println(i);
+            }
+            listList.add(recipes);
+            listList.add(images);
+            listArrayAdapter = new RecipeListArrayAdapter(this,R.layout.recipe_list_layout, listList, activity);
 
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    uploadList.setAdapter(listArrayAdapter);
+                    updateListView();
+                    message.setVisibility(View.GONE);
+                    uploadList.setVisibility(View.VISIBLE);
+                }//run
+            });
+
+            uploadList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    int itemPosition = adapterView.getPositionForView(view);
+                    System.out.println(itemPosition);
+                    Services.recipe = recipes.get(itemPosition);
+                    Services.recipeImage = images.get(itemPosition);
+                    goToRecipe();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }//uploadSuccess
+
+    private void getShopRecipe(int pos, String id){
+        try {
+            System.out.println("getShopRecipe");
+            System.out.println(id);
+            String[] params = {"shop-recipe", String.valueOf(pos), id};
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(new HTTPRequestTask(params, activity));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//getShopRecipe
+
+    public void getShopRecipeSuccess(int pos, String response){
+        try {
+            JSONObject recipe = new JSONObject(response);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    recipes.set(pos, recipe);
+                    ((RecipeListArrayAdapter)uploadList.getAdapter()).setRecipe(pos, recipe);
+                    updateListView();
+                }
+            });
+            /*
+            try {
+                String url = recipe.getJSONObject("recipe").get("image").toString();
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.submit(new ImageRequestTask(pos, url, activity));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            */
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//getShopRecipeSuccess
+
+    public void getShopRecipeFail(int pos){
+
+    }//getShopRecipeFail
+
+    private void updateListView(){
+        ViewGroup.LayoutParams layoutParams = uploadList.getLayoutParams();
+        layoutParams.height = 1000000000; //set big so all list elements draw before get their heights
+        uploadList.setLayoutParams(layoutParams);
+
+        uploadList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                uploadList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                visible = ((RecipeListArrayAdapter)uploadList.getAdapter()).getVisibility();
+                int height = 0;
+                for(int i=0;i<uploadList.getChildCount();i++){
+                    View listItem = uploadList.getChildAt(i);
+                    height += listItem.getHeight() + uploadList.getDividerHeight();
+                }
+                ViewGroup.LayoutParams layoutParams = uploadList.getLayoutParams();
+                layoutParams.height = height - uploadList.getDividerHeight();
+                uploadList.setLayoutParams(layoutParams);
+            }
+        });
+    }//updateListView
 
     public void getUploadsEmpty(String data){
         message.setVisibility(View.VISIBLE);
@@ -164,6 +269,13 @@ public class SettingsActivity extends AppCompatActivity {
         message.setTextColor(ContextCompat.getColor(getBaseContext(), R.color.red));
     }//uploadFail
     //----------------------------------------------------------------------------------------------
+
+    private void goToRecipe(){
+        Intent finishIntent = new Intent(getApplicationContext(), RecipeInfoActivity.class);
+        finishIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finishIntent.putExtra("CallingActivity", activity.getLocalClassName());
+        startActivity(finishIntent);
+    }//goToRecipe
 
     private void goToUpload(){
         Intent finishIntent = new Intent(getApplicationContext(), UploadActivity.class);

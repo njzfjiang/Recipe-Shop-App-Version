@@ -12,12 +12,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -59,6 +61,30 @@ public class RecipeListArrayAdapter extends ArrayAdapter {
         ImageView imageView = convertView.findViewById(R.id.recipeImage);
 
         try{
+            if(json != null){
+                try{
+                    recipeName.setText(json.getJSONObject("recipe").get("label").toString());
+                    System.out.println("name " + position + " set");
+                    if(image != null){
+                        imageView.setImageBitmap(image);
+                        System.out.println("image " + position + " set");
+                    }
+                } catch (JSONException e) {//not edamame recipe
+                    //e.printStackTrace();
+                    System.out.println("Shop Recipe");
+                    recipeName.setText(json.getJSONObject("find_recipe").get("title").toString());
+                    System.out.println("name " + position + " set");
+                    byte[] decoded = Base64.getDecoder().decode(json.getJSONObject("find_recipe").get("image").toString());
+                    image = BitmapFactory.decodeByteArray(decoded,0, decoded.length);
+                    imageView.setImageBitmap(image);
+                    System.out.println("image " + position + " set");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        /*try{
             if(json != null) {
                 recipeName.setText(json.getJSONObject("recipe").get("label").toString());
                 System.out.println("name " + position + " set");
@@ -72,7 +98,7 @@ public class RecipeListArrayAdapter extends ArrayAdapter {
             }
         }catch (Exception e){
             e.printStackTrace();
-        }
+        }*/
         if(visible.get(position)){
             convertView.setLayoutParams(new AbsListView.LayoutParams(-1,-2));
             convertView.setVisibility(View.VISIBLE);

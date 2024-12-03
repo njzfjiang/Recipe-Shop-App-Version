@@ -54,7 +54,7 @@ public class UploadActivity extends AppCompatActivity {
     private Button addIngredient, uploadImage, uploadRecipe;
     private LinearLayout ingredientList;
     private Spinner privacySpinner;
-    private String privacy;
+    private String privacy = "";
     private Activity activity;
     private JSONObject recipe;
     private Bitmap image;
@@ -223,16 +223,17 @@ public class UploadActivity extends AppCompatActivity {
                 TextView tv = ingredientViews.get(i).findViewById(R.id.ingredient_input);
                 added += 1;
                 if(tv.getText().length() > 0) {
-                    ingredientString += "\"" + tv.getText() + "\"";
+                    ingredientString += "\t\t\"" + tv.getText() + "\"";
                     if(added < count){
                         ingredientString += ",";
+                        ingredientString += "\n";
                     }
-                    ingredientString += "\n";
                 }
             }
         }
-        String[] params = {"upload", (String) recipeName.getText(), (String) recipeSource.getText(),
-                ingredientString, (String) recipeInstructions.getText(), privacy};
+
+        String[] params = {"upload", recipeName.getText().toString(), recipeSource.getText().toString(),
+                ingredientString, recipeInstructions.getText().toString().replaceAll("\n", "\\\\n"), privacy};
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(new HTTPRequestTask(params,activity));
         uploadAttempt();
@@ -269,7 +270,7 @@ public class UploadActivity extends AppCompatActivity {
 
         ingredientViews.add(ingredientItem);
         ingredientList.addView(ingredientItem);
-        ingredients.add("");
+        ingredients.add(null);
         ingredientID += 1;
         updateIngredientRequire();
     }//addIngredientLines
@@ -311,7 +312,7 @@ public class UploadActivity extends AppCompatActivity {
         if(count >= 2) {
             ingredientList.removeView(ingredientViews.get(index));
             ingredientViews.set(index, null);
-            ingredients.set(index, "");
+            ingredients.set(index, null);
             updateIngredientRequire();
         }
     }//removeIngredientLines
