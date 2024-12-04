@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -12,7 +13,9 @@ import android.text.Html;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,15 +31,21 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -62,6 +71,8 @@ public class UploadActivity extends AppCompatActivity {
     private int ingredientID = 0;
     private ArrayList<View> ingredientViews;
     private ArrayList<String> ingredients;
+    private float yStart;
+    private int yDead = 50;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -180,6 +191,17 @@ public class UploadActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
+        ViewCompat.setOnApplyWindowInsetsListener(getWindow().getDecorView(), (v, insets) -> {
+            boolean imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime());
+            if(!imeVisible){
+                navBar.setVisibility(View.VISIBLE);
+            }
+            else{
+                navBar.setVisibility(View.GONE);
+            }
+            return insets;
+        });
+
         addIngredient.setOnClickListener(view -> {
             addIngredientLine();
         });
@@ -193,12 +215,53 @@ public class UploadActivity extends AppCompatActivity {
         });
     }//setListeners
 
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event){
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            yStart = event.getY();
+        }
+        else if(event.getAction() == MotionEvent.ACTION_UP){
+            //if tap
+            if(!(event.getY() < yStart - yDead || event.getY() > yStart + yDead)) {
+                View touchedView = getCurrentFocus();
+                if (touchedView instanceof TextInputEditText) {
+                    Rect viewBounds = new Rect();
+                    touchedView.getGlobalVisibleRect(viewBounds);
+                    if (!viewBounds.contains((int) event.getRawX(), (int) event.getRawY())) {
+                        touchedView.clearFocus();
+                        //hide keyboard
+                        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                        inputMethodManager.hideSoftInputFromWindow(touchedView.getWindowToken(), 0);
+                        navBar.setVisibility(View.VISIBLE);
+                    }//outside bounds
+                }//TextInputEditText
+                else{
+                    navBar.setVisibility(View.VISIBLE);
+                }
+            }//within dead zone
+        }//touch release
+
+        return super.dispatchTouchEvent(event);
+    }
+
     ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 if (uri != null) {
                     System.out.println("PhotoPicker\t Selected URI: " + uri);
                     try {
                         image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                        image = resizeImageResolution(image, 300);
+                        System.out.println("resized to 300");
+                        int quality = 100;
+                        while(!smallerThan(image, 10000000) && quality > 10){
+                            quality -= 10;
+                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                            image.compress(Bitmap.CompressFormat.PNG, quality, byteArrayOutputStream);
+                            byte[] decoded = byteArrayOutputStream.toByteArray();
+                            //String encoded = Base64.getEncoder().encodeToString(imageBase64);
+                            //[] decoded = Base64.getDecoder().decode(encoded);
+                            image = BitmapFactory.decodeByteArray(decoded,0, decoded.length);
+                        }
                         recipeImage.setImageBitmap(image);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -207,6 +270,65 @@ public class UploadActivity extends AppCompatActivity {
                     System.out.println("PhotoPicker\t No media selected");
                 }
             });
+
+    private Bitmap resizeImageResolution(Bitmap image, int newMaxDim){
+        int width = image.getWidth();
+        int height = image.getHeight();
+        float aspectRatio = (float)width / (float)height;
+        if(aspectRatio > 1){
+            width = newMaxDim;
+            height = (int) (width / aspectRatio);
+        }
+        else{
+            height = newMaxDim;
+            width = (int) (height * aspectRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }//resizeImageResolution
+
+
+    //checks if image is smaller than maxSize bytes
+    private boolean smallerThan(Bitmap image, int maxSize){
+        boolean result = false;
+        int size;
+        int quality = 100;
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        image.compress(Bitmap.CompressFormat.PNG, quality, byteArrayOutputStream);
+        byte[] imageBase64 = byteArrayOutputStream.toByteArray();
+        String encoded = Base64.getEncoder().encodeToString(imageBase64);
+
+        byte[] encodedBytes = encoded.getBytes();
+        size = encodedBytes.length;
+
+        if(size < maxSize){
+            result = true;
+        }
+        /*
+        while(size > newMaxSize){
+            //decreasing increments of quality
+            if(quality > 25) {
+                quality -= 25;
+            }
+            else if(quality > 5){
+                quality -= 5;
+            }
+            else if(quality > 1){
+                quality -= 1;
+            }
+
+            result.compress(Bitmap.CompressFormat.PNG, quality, byteArrayOutputStream);
+            imageBase64 = byteArrayOutputStream.toByteArray();
+            encoded = Base64.getEncoder().encodeToString(imageBase64);
+            encodedBytes = encoded.getBytes();
+            size = encodedBytes.length;
+            System.out.println(size);
+        }
+        byte[] decoded = Base64.getDecoder().decode(encoded);
+        result = BitmapFactory.decodeByteArray(decoded,0, decoded.length);
+         */
+        return result;
+    }//smallerThan
 
     private void uploadRecipe() {
         int count = 0;

@@ -51,12 +51,12 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
             android:backgroundTint="@color/red"
-            android:minHeight="60dp"
-            android:minWidth="60dp"
+            android:minHeight="32dp"
+            android:minWidth="32dp"
             android:padding="8dp"
             android:text="X"
             android:textColor="?colorSurfaceContainer"
-            android:textSize="20sp"
+            android:textSize="14sp"
             app:strokeColor="?colorAccent"
             app:strokeWidth="1dp" />
     </RelativeLayout>

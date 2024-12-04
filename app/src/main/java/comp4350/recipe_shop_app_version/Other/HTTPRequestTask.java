@@ -83,6 +83,9 @@ public class HTTPRequestTask implements Runnable{
         else if(params.get(0).equals("shop-recipe")) {
             getShopRecipe(urlString);
         }
+        else if(params.get(0).equals("delete-recipe")) {
+            deleteRecipe(urlString);
+        }
     }//run
 
 
@@ -209,6 +212,9 @@ public class HTTPRequestTask implements Runnable{
             urlString += prefix + "username=" + Services.username;
             prefix = "&";
         }
+        if(params.size() >= 3 && !params.get(2).isEmpty()) {
+            urlString += prefix + "source=" + params.get(2).replace(" ", "+");
+        }
         String[] reqParams = {"GET"};
 
         String[] response = request(urlString, reqParams);
@@ -249,6 +255,9 @@ public class HTTPRequestTask implements Runnable{
         if(!params.get(2).isEmpty()) {
             urlString += prefix + "title=" + params.get(2).replace(" ", "+");
         }
+        if(!params.get(3).isEmpty()) {
+            urlString += prefix + "source=" + params.get(3).replace(" ", "+");
+        }
         String[] reqParams = {"POST"};
 
         String[] response = request(urlString, reqParams);
@@ -280,6 +289,9 @@ public class HTTPRequestTask implements Runnable{
         if(!params.get(2).isEmpty()) {
             urlString += prefix + "title=" + params.get(2).replace(" ", "+");
         }
+        if(!params.get(3).isEmpty()) {
+            urlString += prefix + "source=" + params.get(3).replace(" ", "+");
+        }
         String[] reqParams = {"DELETE"};
 
         String[] response = request(urlString, reqParams);
@@ -297,7 +309,7 @@ public class HTTPRequestTask implements Runnable{
             System.out.println("ERROR!");
             ((RecipeInfoActivity) activity).checkFavorite();
         }
-    }//addFavorite
+    }//deleteFavorite
 
 
     private void getFavorites(String urlString){
@@ -424,9 +436,8 @@ public class HTTPRequestTask implements Runnable{
         String[] response = request(urlString, reqParams);
 
         if(response[0].equals("200")){
-            System.out.println("getUploadsSuccess 1");
+            System.out.println("getUploadsSuccess");
             ((SettingsActivity) activity).getUploadsSuccess(response[1]);
-            System.out.println("gotUploadsSuccess 2");
         }
         else if(response[0].equals("404")){
             System.out.println("No uploaded recipes found");
@@ -454,6 +465,9 @@ public class HTTPRequestTask implements Runnable{
             if(activity instanceof SettingsActivity) {
                 ((SettingsActivity) activity).getShopRecipeSuccess(Integer.parseInt(params.get(1)), response[1]);
             }
+            else if(activity instanceof FavoritesActivity) {
+                ((FavoritesActivity) activity).getShopRecipeSuccess(Integer.parseInt(params.get(1)), response[1]);
+            }
         }
         //error / other
         else {
@@ -461,8 +475,46 @@ public class HTTPRequestTask implements Runnable{
             if(activity instanceof SettingsActivity) {
                 ((SettingsActivity) activity).getShopRecipeFail(Integer.parseInt(params.get(1)));
             }
+            else if(activity instanceof FavoritesActivity) {
+                ((FavoritesActivity) activity).getShopRecipeFail(Integer.parseInt(params.get(1)));
+            }
         }
     }//getShopRecipe
+
+
+    private void deleteRecipe(String urlString){
+        System.out.println("deleteRecipe");
+        String prefix = "?";
+        urlString += "/api/uploads/";
+        urlString += params.get(1);
+        if(!Services.username.isEmpty()) {
+            urlString += prefix + "username=" + Services.username;
+            prefix = "&";
+        }
+        if(!params.get(2).isEmpty()) {
+            urlString += prefix + "title=" + params.get(2).replace(" ", "+");
+        }
+
+        System.out.println("deleteRecipe: " + urlString);
+
+        String[] reqParams = {"DELETE"};
+
+        String[] response = request(urlString, reqParams);
+
+        if(response[0].equals("204")){
+            System.out.println("removedFromUploads");
+            ((RecipeInfoActivity) activity).deleteSuccess();
+        }
+        else if(response[0].equals("404")){
+            System.out.println("noUploadedRecipeFound");
+            ((RecipeInfoActivity) activity).deleteFailed();
+        }
+        //error / error
+        else {
+            System.out.println("ERROR!");
+            ((RecipeInfoActivity) activity).deleteFailed();
+        }
+    }//deleteFavorite
 
 
     private String[] request(String urlString, String[] reqParams){

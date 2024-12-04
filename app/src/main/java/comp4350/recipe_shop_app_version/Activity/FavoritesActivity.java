@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
@@ -36,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -127,8 +129,18 @@ public class FavoritesActivity extends AppCompatActivity {
                 for(int i=0;i<recipes.size();i++){
                     try {
                         JSONObject json = ((RecipeListArrayAdapter)favoriteList.getAdapter()).getRecipe(i);
-                        System.out.println(json.getJSONObject("recipe").get("label").toString());
-                        if(json.getJSONObject("recipe").get("label").toString().toLowerCase().indexOf(keywords.toLowerCase()) != -1){
+                        String title = "";
+                        if(json.has("recipe")){
+                            title = json.getJSONObject("recipe").get("label").toString();
+                        }
+                        else if(json.has("find_recipe")){
+                            title =  json.getJSONObject("find_recipe").get("title").toString();
+                        }
+                        System.out.println(title);
+                        if(title.isEmpty()){
+                            ((RecipeListArrayAdapter) favoriteList.getAdapter()).setVisibility(i, false);
+                        }
+                        else if(title.toLowerCase().contains(keywords.toLowerCase())){
                             ((RecipeListArrayAdapter) favoriteList.getAdapter()).setVisibility(i, true);
                             updateListView();
                         }
@@ -221,7 +233,12 @@ public class FavoritesActivity extends AppCompatActivity {
             for(int i=0;i<recipeArray.length();i++){
                 recipes.add(null);
                 images.add(null);
-                getRecipe(i, recipeArray.getJSONObject(i).get("recipeID").toString());
+                if(recipeArray.getJSONObject(i).has("source") && recipeArray.getJSONObject(i).get("source").toString().equals("recipe-shop")){
+                    getShopRecipe(i, recipeArray.getJSONObject(i).get("recipeID").toString());
+                }
+                else {
+                    getRecipe(i, recipeArray.getJSONObject(i).get("recipeID").toString());
+                }
             }
             listList.add(recipes);
             listList.add(images);
@@ -251,6 +268,50 @@ public class FavoritesActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }//gotFavorites
+
+    private void getShopRecipe(int pos, String id){
+        try {
+            System.out.println("getShopRecipe");
+            System.out.println(id);
+            String[] params = {"shop-recipe", String.valueOf(pos), id};
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(new HTTPRequestTask(params, activity));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//getShopRecipe
+
+    public void getShopRecipeSuccess(int pos, String response){
+        try {
+            JSONObject recipe = new JSONObject(response);
+            Bitmap image = null;
+            byte[] decoded = null;
+            try {
+                decoded = Base64.getDecoder().decode(recipe.getJSONObject("find_recipe").get("image").toString());
+                image = BitmapFactory.decodeByteArray(decoded,0, decoded.length);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Bitmap finalImage = image;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    recipes.set(pos, recipe);
+                    ((RecipeListArrayAdapter)favoriteList.getAdapter()).setRecipe(pos, recipe);
+                    if(finalImage != null) {
+                        ((RecipeListArrayAdapter) favoriteList.getAdapter()).setImage(pos, finalImage);
+                    }
+                    updateListView();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//getShopRecipeSuccess
+
+    public void getShopRecipeFail(int pos){
+        ((RecipeListArrayAdapter) favoriteList.getAdapter()).setVisibility(pos, false);
+    }//getShopRecipeFail
 
     private void getRecipe(int pos, String id){
         try {
@@ -286,6 +347,10 @@ public class FavoritesActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }//getRecipeSuccess
+
+    public void getRecipeFail(int pos){
+        ((RecipeListArrayAdapter) favoriteList.getAdapter()).setVisibility(pos, false);
+    }//getRecipeFail
 
     public void loadImage(int pos, Bitmap image){
         runOnUiThread(new Runnable() {
@@ -336,9 +401,7 @@ public class FavoritesActivity extends AppCompatActivity {
          */
     }//updateListView
 
-    public void getRecipeFail(int pos){
 
-    }//getRecipe
 
     public void getFavoritesFail(){
         message.setVisibility(View.VISIBLE);

@@ -62,20 +62,18 @@ public class RecipeListArrayAdapter extends ArrayAdapter {
 
         try{
             if(json != null){
-                try{
+                if(json.has("recipe")){
+                    System.out.println("Edamame Recipe");
                     recipeName.setText(json.getJSONObject("recipe").get("label").toString());
                     System.out.println("name " + position + " set");
-                    if(image != null){
-                        imageView.setImageBitmap(image);
-                        System.out.println("image " + position + " set");
-                    }
-                } catch (JSONException e) {//not edamame recipe
-                    //e.printStackTrace();
+                }
+                else if(json.has("find_recipe")){
                     System.out.println("Shop Recipe");
                     recipeName.setText(json.getJSONObject("find_recipe").get("title").toString());
                     System.out.println("name " + position + " set");
-                    byte[] decoded = Base64.getDecoder().decode(json.getJSONObject("find_recipe").get("image").toString());
-                    image = BitmapFactory.decodeByteArray(decoded,0, decoded.length);
+                }
+
+                if(image != null){
                     imageView.setImageBitmap(image);
                     System.out.println("image " + position + " set");
                 }
@@ -84,21 +82,6 @@ public class RecipeListArrayAdapter extends ArrayAdapter {
             e.printStackTrace();
         }
 
-        /*try{
-            if(json != null) {
-                recipeName.setText(json.getJSONObject("recipe").get("label").toString());
-                System.out.println("name " + position + " set");
-            }
-            if(image != null){
-                imageView.setImageBitmap(image);
-                System.out.println("image " + position + " set");
-            }
-            else{
-                //System.out.println("null image");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }*/
         if(visible.get(position)){
             convertView.setLayoutParams(new AbsListView.LayoutParams(-1,-2));
             convertView.setVisibility(View.VISIBLE);
