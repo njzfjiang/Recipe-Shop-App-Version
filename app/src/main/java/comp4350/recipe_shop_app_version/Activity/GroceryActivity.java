@@ -103,13 +103,24 @@ public class GroceryActivity extends AppCompatActivity {
 
     public void getListSuccess(String response){
         try {
-            JSONArray recipeArray = new JSONObject(response).getJSONArray("recipes");
-            for(int i=0;i<recipeArray.length();i++){
+            System.out.println(response);
+            JSONArray localArray = new JSONObject(response).getJSONArray("localRecipes");
+            for(int i=0;i<localArray.length();i++){
                 recipes.add(null);
-                String[] params = {"recipe", String.valueOf(i), recipeArray.get(i).toString()};
+                String[] params = {"shop-recipe", String.valueOf(i), localArray.get(i).toString()};
                 ExecutorService executor = Executors.newSingleThreadExecutor();
                 executor.submit(new HTTPRequestTask(params,activity));
             }
+            int offset = localArray.length();
+            JSONArray recipeArray = new JSONObject(response).getJSONArray("recipes");
+            for(int i=0;i<recipeArray.length();i++){
+                recipes.add(null);
+                String[] params = {"recipe", String.valueOf(i+offset), recipeArray.get(i).toString()};
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.submit(new HTTPRequestTask(params,activity));
+            }
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -125,17 +136,39 @@ public class GroceryActivity extends AppCompatActivity {
         }
     }//getRecipeSuccess
 
+    public void getShopRecipeSuccess(int pos, String response){
+        try {
+            JSONObject recipe = new JSONObject(response);
+            recipes.set(pos, recipe);
+            updateIngredientList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//getShopRecipeSuccess
+
     public void getRecipeFail(int pos){
 
     }//getRecipeFail
+
+    public void getShopRecipeFail(int pos){
+
+    }//getShopRecipeFail
 
     private void updateIngredientList(){
         ingredientList = "";
         for(int i=0;i<recipes.size();i++){
             if(recipes.get(i) != null) {
                 try {
-                    JSONArray ingredientLines = recipes.get(i).getJSONObject("recipe").getJSONArray("ingredientLines");
-                    ingredientList += recipes.get(i).getJSONObject("recipe").get("label").toString() + "\n";
+                    JSONArray ingredientLines = null;
+                    if(recipes.get(i).has("recipe")) {
+                        ingredientLines = recipes.get(i).getJSONObject("recipe").getJSONArray("ingredientLines");
+                        ingredientList += recipes.get(i).getJSONObject("recipe").get("label").toString() + "\n";
+                    }
+                    else if(recipes.get(i).has("find_recipe")){
+                        System.out.println(recipes.get(i));
+                        ingredientLines = recipes.get(i).getJSONObject("find_recipe").getJSONArray("ingredients");
+                        ingredientList += recipes.get(i).getJSONObject("find_recipe").get("title").toString() + "\n";
+                    }
                     for (int j = 0; j < ingredientLines.length(); j++) {
                         try {
                             ingredientList += "\t\t\u2022" + ingredientLines.get(j) + "\n";

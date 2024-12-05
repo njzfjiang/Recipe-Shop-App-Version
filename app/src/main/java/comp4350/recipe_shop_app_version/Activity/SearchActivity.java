@@ -38,9 +38,12 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -333,18 +336,49 @@ public class SearchActivity extends AppCompatActivity {
         System.out.println(response);
         try {
             JSONObject searchResults = new JSONObject(response);
+            JSONArray local = null;
             int from = (int) searchResults.get("from");
             int to = (int) searchResults.get("to");
-            if(to>0){
+            int localSize = -1;
+            if(searchResults.has("local")) {
+                local = searchResults.getJSONArray("local");
+                localSize = local.length();
+            }
+            System.out.println(local);
+            if(to>0 || localSize>0){
+                for(int i=0;i<localSize;i++){
+                    try {
+                        JSONObject recipe = new JSONObject(local.get(i).toString());
+                        System.out.println(recipe);
+                        recipes.add(recipe);
+                        Bitmap image = null;
+                        byte[] decoded = null;
+                        try {
+                            decoded = Base64.getDecoder().decode(recipe.getJSONObject("find_recipe").get("image").toString());
+                            image = BitmapFactory.decodeByteArray(decoded,0, decoded.length);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println("image: " + image);
+                        images.add(image);
+                        heights.add(0);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 for(int i=from-1;i<to;i++){
                     JSONObject recipe = new JSONObject(searchResults.getJSONArray("hits").get(i).toString());
+                    int index = images.size();
                     recipes.add(recipe);
                     images.add(null);
                     heights.add(0);
                 }
+
                 listList.add(recipes);
                 listList.add(images);
                 listArrayAdapter = new RecipeListArrayAdapter(this,R.layout.recipe_list_layout, listList, activity);
+
 
                 runOnUiThread(new Runnable() {
                     @Override
@@ -389,6 +423,8 @@ public class SearchActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                System.out.println(images.size());
+                System.out.println(images.get(pos));
                 images.set(pos, image);
                 ((RecipeListArrayAdapter)recipeList.getAdapter()).setImage(pos, image);
                 updateListView();

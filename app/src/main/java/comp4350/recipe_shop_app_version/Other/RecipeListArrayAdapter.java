@@ -72,6 +72,9 @@ public class RecipeListArrayAdapter extends ArrayAdapter {
                     recipeName.setText(json.getJSONObject("find_recipe").get("title").toString());
                     System.out.println("name " + position + " set");
                 }
+                else{
+                    System.out.println(json);
+                }
 
                 if(image != null){
                     imageView.setImageBitmap(image);

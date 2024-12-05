@@ -10,6 +10,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -170,9 +172,13 @@ public class RecipeInfoActivity extends AppCompatActivity {
             String linkText = (String) instructionLink.getText();
             instructionLink.setText(Html.fromHtml("<a href=\"" + link + "\">" + linkText + "</a>"));
             instructionLink.setMovementMethod(LinkMovementMethod.getInstance());
+            instructionLink.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            instructionLink.setTextSize(TypedValue.COMPLEX_UNIT_SP, 24);
         }
         else{
             instructionLink.setText(instructions);
+            instructionLink.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+            instructionLink.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
         }
 
         checkFavorite();
@@ -244,6 +250,7 @@ public class RecipeInfoActivity extends AppCompatActivity {
             String recipeID = null;
             String name = null;
             String source = null;
+            System.out.println(recipe);
             if(recipe.has("recipe")) {
                 int indexID = recipe.getJSONObject("recipe").get("uri").toString().indexOf("_") + 1;
                 recipeID = recipe.getJSONObject("recipe").get("uri").toString().substring(indexID);
@@ -255,6 +262,9 @@ public class RecipeInfoActivity extends AppCompatActivity {
                 source = "recipe-shop";
             }
             String[] params = {"addFavorite", recipeID, name, source};
+            System.out.println(recipeID);
+            System.out.println(name);
+            System.out.println(source);
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(new HTTPRequestTask(params, activity));
         } catch (Exception e) {
@@ -266,18 +276,22 @@ public class RecipeInfoActivity extends AppCompatActivity {
         try {
             String recipeID = null;
             String name = null;
-            String[] params;
+            String source = null;
+            System.out.println(recipe);
             if(recipe.has("recipe")) {
                 int indexID = recipe.getJSONObject("recipe").get("uri").toString().indexOf("_") + 1;
                 recipeID = recipe.getJSONObject("recipe").get("uri").toString().substring(indexID);
                 name = recipe.getJSONObject("recipe").get("label").toString();
-                params = new String[]{"deleteFavorite", recipeID, name};
             }
             else{
                 recipeID = recipe.getJSONObject("find_recipe").get("_id").toString();
                 name = recipe.getJSONObject("find_recipe").get("title").toString();
-                params = new String[]{"deleteFavorite", recipeID, name, "recipe-shop"};
+                source = "recipe-shop";
             }
+            String[] params = {"deleteFavorite", recipeID, name, source};
+            System.out.println(recipeID);
+            System.out.println(name);
+            System.out.println(source);
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(new HTTPRequestTask(params, activity));
         } catch (Exception e) {

@@ -250,8 +250,8 @@ public class UploadActivity extends AppCompatActivity {
                     System.out.println("PhotoPicker\t Selected URI: " + uri);
                     try {
                         image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                        image = resizeImageResolution(image, 300);
-                        System.out.println("resized to 300");
+                        image = resizeImageResolution(image, 500);
+                        System.out.println("resized to 500");
                         int quality = 100;
                         while(!smallerThan(image, 10000000) && quality > 10){
                             quality -= 10;
@@ -304,29 +304,6 @@ public class UploadActivity extends AppCompatActivity {
         if(size < maxSize){
             result = true;
         }
-        /*
-        while(size > newMaxSize){
-            //decreasing increments of quality
-            if(quality > 25) {
-                quality -= 25;
-            }
-            else if(quality > 5){
-                quality -= 5;
-            }
-            else if(quality > 1){
-                quality -= 1;
-            }
-
-            result.compress(Bitmap.CompressFormat.PNG, quality, byteArrayOutputStream);
-            imageBase64 = byteArrayOutputStream.toByteArray();
-            encoded = Base64.getEncoder().encodeToString(imageBase64);
-            encodedBytes = encoded.getBytes();
-            size = encodedBytes.length;
-            System.out.println(size);
-        }
-        byte[] decoded = Base64.getDecoder().decode(encoded);
-        result = BitmapFactory.decodeByteArray(decoded,0, decoded.length);
-         */
         return result;
     }//smallerThan
 

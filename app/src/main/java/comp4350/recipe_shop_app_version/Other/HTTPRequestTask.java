@@ -178,7 +178,7 @@ public class HTTPRequestTask implements Runnable{
         String prefix = "?";
         urlString += "/api/recipe/search";
         if(!params.get(4).isEmpty()) {
-            urlString += prefix + "keyword=" + params.get(4);
+            urlString += prefix + "keyword=" + params.get(4).replaceAll(" ", "+");
             prefix = "&";
         }
         if(!params.get(1).isEmpty()) {
@@ -213,7 +213,7 @@ public class HTTPRequestTask implements Runnable{
             prefix = "&";
         }
         if(params.size() >= 3 && !params.get(2).isEmpty()) {
-            urlString += prefix + "source=" + params.get(2).replace(" ", "+");
+            urlString += prefix + "source=" + params.get(2).replaceAll(" ", "+");
         }
         String[] reqParams = {"GET"};
 
@@ -253,11 +253,12 @@ public class HTTPRequestTask implements Runnable{
             prefix = "&";
         }
         if(!params.get(2).isEmpty()) {
-            urlString += prefix + "title=" + params.get(2).replace(" ", "+");
+            urlString += prefix + "title=" + params.get(2).replaceAll(" ", "+");
         }
-        if(!params.get(3).isEmpty()) {
-            urlString += prefix + "source=" + params.get(3).replace(" ", "+");
+        if(params.get(3) != null && !params.get(3).isEmpty()) {
+            urlString += prefix + "source=" + params.get(3).replaceAll(" ", "+");
         }
+        System.out.println(urlString);
         String[] reqParams = {"POST"};
 
         String[] response = request(urlString, reqParams);
@@ -287,11 +288,12 @@ public class HTTPRequestTask implements Runnable{
             prefix = "&";
         }
         if(!params.get(2).isEmpty()) {
-            urlString += prefix + "title=" + params.get(2).replace(" ", "+");
+            urlString += prefix + "title=" + params.get(2).replaceAll(" ", "+");
         }
-        if(!params.get(3).isEmpty()) {
-            urlString += prefix + "source=" + params.get(3).replace(" ", "+");
+        if(params.get(3) != null && !params.get(3).isEmpty()) {
+            urlString += prefix + "source=" + params.get(3).replaceAll(" ", "+");
         }
+        System.out.println(urlString);
         String[] reqParams = {"DELETE"};
 
         String[] response = request(urlString, reqParams);
@@ -393,8 +395,11 @@ public class HTTPRequestTask implements Runnable{
 
     private void upload(String urlString){
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        Services.recipeImage.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] imageBase64 = byteArrayOutputStream.toByteArray();
+        byte[] imageBase64 = new byte[0];
+        if(Services.recipeImage != null) {
+            Services.recipeImage.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            imageBase64 = byteArrayOutputStream.toByteArray();
+        }
 
         urlString += "/api/recipe/upload";
         String[] reqParams = {"POST", "{\n\t\"title\":\"",params.get(1), "\"," +
@@ -468,6 +473,9 @@ public class HTTPRequestTask implements Runnable{
             else if(activity instanceof FavoritesActivity) {
                 ((FavoritesActivity) activity).getShopRecipeSuccess(Integer.parseInt(params.get(1)), response[1]);
             }
+            else if(activity instanceof GroceryActivity) {
+                ((GroceryActivity) activity).getShopRecipeSuccess(Integer.parseInt(params.get(1)), response[1]);
+            }
         }
         //error / other
         else {
@@ -477,6 +485,9 @@ public class HTTPRequestTask implements Runnable{
             }
             else if(activity instanceof FavoritesActivity) {
                 ((FavoritesActivity) activity).getShopRecipeFail(Integer.parseInt(params.get(1)));
+            }
+            else if(activity instanceof GroceryActivity) {
+                ((GroceryActivity) activity).getShopRecipeFail(Integer.parseInt(params.get(1)));
             }
         }
     }//getShopRecipe
@@ -492,7 +503,7 @@ public class HTTPRequestTask implements Runnable{
             prefix = "&";
         }
         if(!params.get(2).isEmpty()) {
-            urlString += prefix + "title=" + params.get(2).replace(" ", "+");
+            urlString += prefix + "title=" + params.get(2).replaceAll(" ", "+");
         }
 
         System.out.println("deleteRecipe: " + urlString);
