@@ -90,12 +90,15 @@ public class HTTPRequestTask implements Runnable{
 
 
     private void login(String urlString){
-        urlString += "/api/login?username=";
-        urlString += Services.username;
-        urlString += "&password=";
-        urlString += Services.password;
-        String[] reqParams = {"GET"};
+        urlString += "/api/login";
+        //urlString += "/api/login?username=";
+        //urlString += Services.username;
+        //urlString += "&password=";
+        //urlString += Services.password;
+        //String[] reqParams = {"GET"};
 
+        String[] reqParams = {"POST", "{\n\"username\":\"",Services.username, "\"," +
+                "\n\"password\":\"",Services.password, "\"\n}"};
         String[] response = request(urlString, reqParams);
 
         if(response[0].equals("200")){
