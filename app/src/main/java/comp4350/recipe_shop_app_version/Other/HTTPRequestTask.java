@@ -259,7 +259,13 @@ public class HTTPRequestTask implements Runnable{
             urlString += prefix + "title=" + params.get(2).replaceAll(" ", "+");
         }
         if(params.get(3) != null && !params.get(3).isEmpty()) {
-            urlString += prefix + "source=" + params.get(3).replaceAll(" ", "+");
+            urlString += prefix + "ingredients=" + params.get(3).replaceAll(" ", "+");
+        }
+        else{
+            urlString += prefix + "ingredients=" + "none";
+        }
+        if(params.get(4) != null && !params.get(4).isEmpty()) {
+            urlString += prefix + "source=" + params.get(4).replaceAll(" ", "+");
         }
         System.out.println(urlString);
         String[] reqParams = {"POST"};

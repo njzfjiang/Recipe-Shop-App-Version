@@ -249,19 +249,25 @@ public class RecipeInfoActivity extends AppCompatActivity {
         try {
             String recipeID = null;
             String name = null;
+            JSONArray ingredients = null;
+            String ingredientString = null;
             String source = null;
             System.out.println(recipe);
             if(recipe.has("recipe")) {
                 int indexID = recipe.getJSONObject("recipe").get("uri").toString().indexOf("_") + 1;
                 recipeID = recipe.getJSONObject("recipe").get("uri").toString().substring(indexID);
                 name = recipe.getJSONObject("recipe").get("label").toString();
+                ingredients = recipe.getJSONObject("recipe").getJSONArray("ingredients");
+                ingredientString = ingredients.toString();
+                System.out.println(ingredientString);
             }
             else if(recipe.has("find_recipe")){
                 recipeID = recipe.getJSONObject("find_recipe").get("_id").toString();
                 name = recipe.getJSONObject("find_recipe").get("title").toString();
+                ingredientString = recipe.getJSONObject("find_recipe").get("ingredients").toString();
                 source = "recipe-shop";
             }
-            String[] params = {"addFavorite", recipeID, name, source};
+            String[] params = {"addFavorite", recipeID, name, ingredientString, source};
             System.out.println(recipeID);
             System.out.println(name);
             System.out.println(source);
