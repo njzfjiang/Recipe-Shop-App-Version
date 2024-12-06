@@ -286,7 +286,12 @@ public class SettingsActivity extends AppCompatActivity {
             Bitmap image = null;
             byte[] decoded = null;
             try {
-                decoded = Base64.getDecoder().decode(recipe.getJSONObject("find_recipe").get("image").toString());
+                String imgString = recipe.getJSONObject("find_recipe").get("image").toString();
+                int index = imgString.indexOf(",");
+                if(index >= 0){
+                    imgString = imgString.substring(index + 1);
+                }
+                decoded = Base64.getDecoder().decode(imgString);
                 image = BitmapFactory.decodeByteArray(decoded,0, decoded.length);
             } catch (JSONException e) {
                 e.printStackTrace();
