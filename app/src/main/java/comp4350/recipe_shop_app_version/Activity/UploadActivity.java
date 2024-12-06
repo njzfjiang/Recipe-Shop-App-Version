@@ -321,16 +321,19 @@ public class UploadActivity extends AppCompatActivity {
             if(ingredientViews.get(i) != null) {
                 TextView tv = ingredientViews.get(i).findViewById(R.id.ingredient_input);
                 added += 1;
-                if(tv.getText().length() > 0) {
-                    ingredientString += "\t\t\"" + tv.getText() + "\"";
-                    if(added < count){
+                if(!tv.getText().toString().isEmpty()) {
+                    if(!ingredientString.isEmpty()){
                         ingredientString += ",";
                         ingredientString += "\n";
                     }
+                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    System.out.println(tv.getText());
+                    ingredientString += "\t\t\"" + tv.getText() + "\"";
                 }
             }
         }
-
+        System.out.println("==================================");
+        System.out.println(ingredientString);
         String[] params = {"upload", recipeName.getText().toString(), recipeSource.getText().toString(),
                 ingredientString, recipeInstructions.getText().toString().replaceAll("\n", "\\\\n"), privacy};
         ExecutorService executor = Executors.newSingleThreadExecutor();
