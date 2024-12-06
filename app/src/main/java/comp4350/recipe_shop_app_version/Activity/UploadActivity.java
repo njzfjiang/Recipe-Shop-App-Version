@@ -326,14 +326,10 @@ public class UploadActivity extends AppCompatActivity {
                         ingredientString += ",";
                         ingredientString += "\n";
                     }
-                    System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                    System.out.println(tv.getText());
                     ingredientString += "\t\t\"" + tv.getText() + "\"";
                 }
             }
         }
-        System.out.println("==================================");
-        System.out.println(ingredientString);
         String[] params = {"upload", recipeName.getText().toString(), recipeSource.getText().toString(),
                 ingredientString, recipeInstructions.getText().toString().replaceAll("\n", "\\\\n"), privacy};
         ExecutorService executor = Executors.newSingleThreadExecutor();
